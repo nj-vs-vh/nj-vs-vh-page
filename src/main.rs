@@ -1,14 +1,10 @@
 use askama::Template;
-use axum::{
-    extract,
-    http::StatusCode,
-    response::{Html, IntoResponse, Response},
-    routing::get,
-    Router,
-};
+use axum::{response::IntoResponse, routing::get, Router};
 use tower_http::trace::TraceLayer;
 use tracing::Level;
 use tracing_subscriber::FmtSubscriber;
+
+mod template_resp;
 
 #[tokio::main]
 async fn main() {
@@ -18,8 +14,7 @@ async fn main() {
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
 
     let app = Router::new()
-        .route("/", get(handler))
-        .route("/greet/:name", get(greet))
+        .route("/", get(index))
         .layer(TraceLayer::new_for_http());
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
@@ -31,35 +26,11 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn handler() -> Html<&'static str> {
-    Html("<h1>Hello, World!</h1>")
-}
-
-async fn greet(extract::Path(name): extract::Path<String>) -> impl IntoResponse {
-    let template = HelloTemplate { name };
-    HtmlTemplate(template)
-}
-
 #[derive(Template)]
-#[template(path = "test.html")]
-struct HelloTemplate {
-    name: String,
-}
+#[template(path = "index.html")]
+struct IndexTemplate {}
 
-struct HtmlTemplate<T>(T);
-
-impl<T> IntoResponse for HtmlTemplate<T>
-where
-    T: Template,
-{
-    fn into_response(self) -> Response {
-        match self.0.render() {
-            Ok(html) => Html(html).into_response(),
-            Err(err) => (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                format!("Failed to render template. Error: {err}"),
-            )
-                .into_response(),
-        }
-    }
+async fn index() -> impl IntoResponse {
+    let template = IndexTemplate {};
+    template_resp::HtmlTemplateResponse(template)
 }
