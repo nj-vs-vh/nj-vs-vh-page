@@ -38,6 +38,7 @@ async fn index() -> impl IntoResponse {
 
 // TEMP
 fn main() {
-    let project = project::Project::load(&std::path::Path::new("projects/this"));
-    println!("{:?}", project);
+    env_logger::init();
+    let projects = project::Project::load_catalog(&std::path::Path::new("projects"));
+    println!("{:?}", projects);
 }

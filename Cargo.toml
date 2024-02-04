@@ -8,6 +8,8 @@ edition = "2021"
 [dependencies]
 askama = "0.12.1"
 axum = "0.7.4"
+env_logger = "0.11.1"
+log = "0.4.20"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9.31"
 tokio = { version = "1.35.1", features = ["rt-multi-thread", "full"] }
