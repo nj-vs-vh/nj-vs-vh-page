@@ -3,15 +3,16 @@ name = "nj-vs-vh-page"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-askama = "0.12.1"
+askama = { version = "0.12", features = ["with-axum"] }
+askama_axum = "0.4.0"
 axum = "0.7.4"
 env_logger = "0.11.1"
 log = "0.4.20"
+markdown = "1.0.0-alpha.16"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9.31"
+slugify = "0.1.0"
 tokio = { version = "1.35.1", features = ["rt-multi-thread", "full"] }
 tower-http = { version = "0.5.0", features = ["trace"] }
 tracing = "0.1.40"
