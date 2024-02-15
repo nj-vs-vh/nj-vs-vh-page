@@ -4,10 +4,27 @@ use std::{fs::File, io, path::Path};
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
+pub enum LinkKind {
+    GITHUB,
+    OTHER,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct ProjectRelatedLink {
+    pub kind: LinkKind,
+    pub name: String,
+    pub url: String,
+}
+
+#[derive(Deserialize, Debug, Clone)]
 pub struct Metadata {
     pub title: String,
     pub slug: Option<String>,
-    pub subtitle: Option<String>,
+
+    #[serde(default = "Vec::new")]
+    pub links: Vec<ProjectRelatedLink>,
+
+    pub github: Option<String>,
 }
 
 #[derive(Clone)]
@@ -29,15 +46,28 @@ impl std::fmt::Debug for Project {
 
 impl Project {
     pub fn load(dir: &Path) -> io::Result<Project> {
-        log::info!("loading project from {:?}", dir);
+        tracing::info!("loading project from {:?}", dir);
         if !dir.is_dir() {
             return Err(io::Error::other("path must be a directory".to_owned()));
         }
+
         let mut metadata: Metadata = serde_yaml::from_reader(File::open(dir.join("meta.yaml"))?)
             .map_err(|e| io::Error::other(e.to_string()))?;
+        // metadata pre-processing to handle non-trivial defaults
         if metadata.slug == None {
             metadata.slug = Some(slugify!(&metadata.title, max_length = 64));
         }
+        if let Some(ref github_link_url) = metadata.github {
+            metadata.links.insert(
+                0,
+                ProjectRelatedLink {
+                    kind: LinkKind::GITHUB,
+                    name: "github".to_owned(),
+                    url: github_link_url.clone(),
+                },
+            )
+        }
+
         let body_md = std::io::read_to_string(File::open(dir.join("body.md"))?)?;
         let body_html = markdown::to_html(&body_md);
         Ok(Project {
@@ -45,18 +75,6 @@ impl Project {
             body_md,
             body_html,
         })
-    }
-    pub fn dummy() -> Project {
-        let body_md = "## Hello world\n\nThis is *markdown* **text**\n\n__cool!__".to_owned();
-        return Project {
-            metadata: Metadata {
-                title: "Project title".to_owned(),
-                slug: Some("example-project-slug".to_owned()),
-                subtitle: None,
-            },
-            body_html: markdown::to_html(&body_md),
-            body_md,
-        };
     }
 }
 
@@ -76,7 +94,7 @@ impl std::fmt::Display for ProjectCatalog {
 
 impl ProjectCatalog {
     pub fn load(projects_dir: &Path) -> io::Result<ProjectCatalog> {
-        log::info!("loading project catalog from {:?}", projects_dir);
+        tracing::info!("loading project catalog from {:?}", projects_dir);
         let projects: Vec<Project> = projects_dir
             .read_dir()?
             .filter_map(|maybe_dir_entry| {
@@ -85,7 +103,7 @@ impl ProjectCatalog {
                     if let Ok(project) = maybe_project {
                         return Some(project);
                     } else {
-                        log::warn!(
+                        tracing::warn!(
                             "failed to load project from {:?}: {:?}",
                             entry,
                             maybe_project
@@ -95,6 +113,8 @@ impl ProjectCatalog {
                 None
             })
             .collect();
+
+        // validating slug uniqueness
         let mut slugs: Vec<String> = projects
             .iter()
             .filter_map(|p| p.metadata.slug.clone())
@@ -104,11 +124,8 @@ impl ProjectCatalog {
         if slugs.len() != projects.len() {
             return Err(io::Error::other("Project catalog contains duplicate slugs"));
         }
-        Ok(ProjectCatalog { projects })
-    }
 
-    pub fn count(&self) -> usize {
-        self.projects.len()
+        Ok(ProjectCatalog { projects })
     }
 
     pub fn find(&self, slug: &str) -> Option<&Project> {

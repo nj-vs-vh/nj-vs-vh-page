@@ -5,6 +5,7 @@ use axum::{
     routing::get,
     Router,
 };
+use project::ProjectRelatedLink;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::{env, path};
@@ -57,7 +58,7 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-struct ProjectLink {
+struct ProjectHref {
     title: String,
     slug: String,
 }
@@ -65,17 +66,17 @@ struct ProjectLink {
 #[derive(Template)]
 #[template(path = "index.html")]
 struct IndexTemplate {
-    project_links: Vec<ProjectLink>,
+    project_hrefs: Vec<ProjectHref>,
 }
 
 async fn index(State(state): State<AppState>) -> IndexTemplate {
-    let mut project_links: Vec<ProjectLink> = state
+    let mut project_links: Vec<ProjectHref> = state
         .project_catalog
         .projects
         .iter()
         .filter_map(|p| {
             if let Some(slug) = p.metadata.slug.as_deref() {
-                Some(ProjectLink {
+                Some(ProjectHref {
                     title: p.metadata.title.to_owned(),
                     slug: slug.to_owned(),
                 })
@@ -86,7 +87,9 @@ async fn index(State(state): State<AppState>) -> IndexTemplate {
         .collect();
     let mut rng = thread_rng();
     project_links.shuffle(&mut rng);
-    IndexTemplate { project_links }
+    IndexTemplate {
+        project_hrefs: project_links,
+    }
 }
 
 #[derive(Template)]
@@ -94,6 +97,7 @@ async fn index(State(state): State<AppState>) -> IndexTemplate {
 struct ProjectTemplate {
     title: String,
     body_html: String,
+    related_links: Vec<ProjectRelatedLink>,
 }
 
 async fn project_page(
@@ -103,8 +107,10 @@ async fn project_page(
     let project_match = state.project_catalog.find(&slug);
     if let Some(project) = project_match {
         Ok(ProjectTemplate {
-            title: project.metadata.title.clone(),
-            body_html: project.body_html.clone(),
+            // TODO: less stupid cloning!!!
+            title: project.metadata.title.to_owned(),
+            body_html: project.body_html.to_owned(),
+            related_links: project.metadata.links.to_owned(),
         })
     } else {
         Err(StatusCode::NOT_FOUND)

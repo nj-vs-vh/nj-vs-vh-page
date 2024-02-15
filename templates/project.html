@@ -4,13 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>nj-vs-vh | {{ title }}</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
     <header>
       <a href="/"><-</a>
     </header>
-    <h1>{{ title }}</h1>
+    <h1 style="margin-bottom: 0.3em">{{ title }}</h1>
+    {% if related_links.len() > 0 %}
+    <div
+      style="
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        align-items: baseline;
+      "
+    >
+      <span>Links:</span>
+      {% for link in related_links %}
+      <a style="padding: 0.3rem" href="{{link.url}}" target="_blank"
+        >{{ link.name }}</a
+      >
+      {% endfor %}
+    </div>
+    {% endif %}
     <div>{{ body_html|escape("none") }}</div>
   </body>
 </html>

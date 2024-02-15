@@ -13,10 +13,10 @@
       <a
         href="https://www.gssi.it/people/students/students-physics/item/24616-vaiman-igor"
         >at GSSI</a
-      >, software dev on the web and around it, music, and other things.
+      >, software engineering on the web and around, music, and other things.
     </p>
     <p>this site is a place for me to document some of the stuff I do.</p>
-    <h3>where to find / contact me</h3>
+    <h3>how to find me</h3>
     <ul>
       <li>
         <a href="https://github.com/nj-vs-vh">github</a>
@@ -34,10 +34,10 @@
         <code>gosha.vaiman@gmail.com</code>
       </li>
     </ul>
-    <h3>my projects (in random order)</h3>
+    <h3>my projects in random order</h3>
     <ul>
-      {% for link in project_links %}
-      <li><a href="project/{{ link.slug }}">{{ link.title }}</a></li>
+      {% for project_href in project_hrefs %}
+      <li><a href="project/{{ project_href.slug }}">{{ project_href.title }}</a></li>
       {% endfor %}
     </ul>
   </body>
