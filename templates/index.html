@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>nj-vs-vh page</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
     <h1>hi, I'm Igor</h1>
@@ -19,25 +19,31 @@
     <h3>how to find me</h3>
     <ul>
       <li>
-        <a href="https://github.com/nj-vs-vh">github</a>
+        <a href="https://github.com/nj-vs-vh" target="_blank">github</a>
       </li>
       <li>
-        <a href="https://www.linkedin.com/in/igor-vaiman-110ba21a9/"
+        <a
+          href="https://www.linkedin.com/in/igor-vaiman-110ba21a9/"
+          target="_blank"
           >linkedin</a
         >
       </li>
       <li>
-        <a href="https://soundcloud.com/igor_vaiman">soundcloud</a>
+        <a href="https://soundcloud.com/nj_vs_valhalla" target="_blank"
+          >soundcloud</a
+        >
       </li>
       <li>
-        <a href="mailto:gosha.vaiman@gmail.com">e-main</a> to
+        <a href="mailto:gosha.vaiman@gmail.com" target="_blank">e-main</a> to
         <code>gosha.vaiman@gmail.com</code>
       </li>
     </ul>
     <h3>my projects in random order</h3>
     <ul>
       {% for project_href in project_hrefs %}
-      <li><a href="project/{{ project_href.slug }}">{{ project_href.title }}</a></li>
+      <li>
+        <a href="project/{{ project_href.slug }}">{{ project_href.title }}</a>
+      </li>
       {% endfor %}
     </ul>
   </body>
