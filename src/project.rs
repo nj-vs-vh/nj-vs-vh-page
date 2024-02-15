@@ -62,7 +62,7 @@ impl Project {
 
 #[derive(Debug, Clone)]
 pub struct ProjectCatalog {
-    projects: Vec<Project>,
+    pub projects: Vec<Project>,
 }
 
 impl std::fmt::Display for ProjectCatalog {

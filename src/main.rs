@@ -5,6 +5,8 @@ use axum::{
     routing::get,
     Router,
 };
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use std::{env, path};
 use tower_http::trace::TraceLayer;
 use tracing::Level;
@@ -19,10 +21,12 @@ struct AppState {
 
 #[tokio::main]
 async fn main() {
-    let subscriber = FmtSubscriber::builder()
-        .with_max_level(Level::DEBUG)
-        .finish();
+    let is_debug = env::var("DEBUG").is_ok();
+
+    let log_level = if is_debug { Level::DEBUG } else { Level::INFO };
+    let subscriber = FmtSubscriber::builder().with_max_level(log_level).finish();
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
+    tracing::info!("Debug = {}, log level = {}", is_debug, log_level);
 
     let projects_dir = env::var("PROJECTS_DIR").unwrap_or("projects".to_owned());
     tracing::info!("Reading project catalog from {}", &projects_dir);
@@ -49,16 +53,36 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
+struct ProjectLink {
+    title: String,
+    slug: String,
+}
+
 #[derive(Template)]
 #[template(path = "index.html")]
 struct IndexTemplate {
-    number: usize, // temp
+    project_links: Vec<ProjectLink>,
 }
 
 async fn index(State(state): State<AppState>) -> IndexTemplate {
-    IndexTemplate {
-        number: state.project_catalog.count(),
-    }
+    let mut project_links: Vec<ProjectLink> = state
+        .project_catalog
+        .projects
+        .iter()
+        .filter_map(|p| {
+            if let Some(slug) = p.metadata.slug.as_deref() {
+                Some(ProjectLink {
+                    title: p.metadata.title.to_owned(),
+                    slug: slug.to_owned(),
+                })
+            } else {
+                None
+            }
+        })
+        .collect();
+    let mut rng = thread_rng();
+    project_links.shuffle(&mut rng);
+    IndexTemplate { project_links }
 }
 
 #[derive(Template)]

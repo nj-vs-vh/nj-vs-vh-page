@@ -33,7 +33,12 @@
         <code>gosha.vaiman@gmail.com</code>
       </li>
     </ul>
-    <h3>my projects: {{ number }}</h3>
+    <h3>my projects (in random order)</h3>
+    <ul>
+      {% for link in project_links %}
+      <li><a href="project/{{ link.slug }}">{{ link.title }}</a></li>
+      {% endfor %}
+    </ul>
   </body>
   <style>
     body {
