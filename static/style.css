@@ -21,3 +21,7 @@ a {
 a:hover {
     background-color: rgba(115, 150, 232, 0.243);
 }
+
+img {
+  max-width: 90vh;
+}

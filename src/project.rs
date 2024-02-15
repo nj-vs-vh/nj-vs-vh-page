@@ -60,7 +60,9 @@ impl Project {
             )
         }
 
-        let body_md = std::io::read_to_string(File::open(dir.join("body.md"))?)?;
+        let mut body_md = std::io::read_to_string(File::open(dir.join("body.md"))?)?;
+        // preprocessing to insert a nicer typography
+        body_md = body_md.replace("--", "—");
         let body_html = markdown::to_html(&body_md);
         Ok(Project {
             metadata,
