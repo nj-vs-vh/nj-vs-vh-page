@@ -4,14 +4,7 @@ use std::{fs::File, io, path::Path};
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
-pub enum LinkKind {
-    GITHUB,
-    OTHER,
-}
-
-#[derive(Deserialize, Debug, Clone)]
 pub struct ProjectRelatedLink {
-    pub kind: LinkKind,
     pub name: String,
     pub url: String,
 }
@@ -61,7 +54,6 @@ impl Project {
             metadata.links.insert(
                 0,
                 ProjectRelatedLink {
-                    kind: LinkKind::GITHUB,
                     name: "github".to_owned(),
                     url: github_link_url.clone(),
                 },
