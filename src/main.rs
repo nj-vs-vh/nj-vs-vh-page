@@ -51,12 +51,16 @@ async fn main() {
             project_catalog: catalog,
         });
 
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
-        .await
-        .unwrap();
+    let port = env::var("PORT").unwrap_or("3284".to_owned());
+    let host = env::var("HOST").unwrap_or("0.0.0.0".to_owned());
+    let addr = format!("{}:{}", host, port);
+    tracing::info!("Port: {}, host: {}, address: {}", port, host, addr);
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap();
 }
+
+// index
 
 struct ProjectHref {
     title: String,
@@ -65,12 +69,12 @@ struct ProjectHref {
 
 #[derive(Template)]
 #[template(path = "index.html")]
-struct IndexTemplate {
+struct Index {
     project_hrefs: Vec<ProjectHref>,
 }
 
-async fn index(State(state): State<AppState>) -> IndexTemplate {
-    let mut project_links: Vec<ProjectHref> = state
+async fn index(State(state): State<AppState>) -> Index {
+    let mut project_hrefs: Vec<ProjectHref> = state
         .project_catalog
         .projects
         .iter()
@@ -86,15 +90,15 @@ async fn index(State(state): State<AppState>) -> IndexTemplate {
         })
         .collect();
     let mut rng = thread_rng();
-    project_links.shuffle(&mut rng);
-    IndexTemplate {
-        project_hrefs: project_links,
-    }
+    project_hrefs.shuffle(&mut rng);
+    Index { project_hrefs }
 }
+
+// project page
 
 #[derive(Template)]
 #[template(path = "project.html")]
-struct ProjectTemplate {
+struct ProjectPage {
     title: String,
     body_html: String,
     related_links: Vec<ProjectRelatedLink>,
@@ -103,10 +107,10 @@ struct ProjectTemplate {
 async fn project_page(
     State(state): State<AppState>,
     Path(slug): Path<String>,
-) -> Result<ProjectTemplate, StatusCode> {
+) -> Result<ProjectPage, StatusCode> {
     let project_match = state.project_catalog.find(&slug);
     if let Some(project) = project_match {
-        Ok(ProjectTemplate {
+        Ok(ProjectPage {
             // TODO: less stupid cloning!!!
             title: project.metadata.title.to_owned(),
             body_html: project.body_html.to_owned(),
