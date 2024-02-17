@@ -8,7 +8,7 @@ and generates python code to describe it. the usage is:
 
 ```bash
 # get example JSON data from 
-# https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-public-repositories
+# https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-the-authenticated-user
 gh api \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
