@@ -1,5 +1,5 @@
-title: web version of cosmic rays plot
+title: browser version of cosmic rays spectrum plot
 github: https://github.com/nj-vs-vh/The_CR_Spectrum
 links:
-  - name: upstream github
+  - name: original plot repo
     url: https://github.com/carmeloevoli/The_CR_Spectrum

@@ -1,3 +1,4 @@
+use regex::Regex;
 use slugify::slugify;
 use std::{fs::File, io, path::Path};
 
@@ -61,9 +62,18 @@ impl Project {
         }
 
         let mut body_md = std::io::read_to_string(File::open(dir.join("body.md"))?)?;
-        // preprocessing to insert a nicer typography
+
+        // preprocessing Markdown
+        // 1. insert a nicer typography
         body_md = body_md.replace("--", "—");
-        let body_html = markdown::to_html(&body_md);
+
+        let mut body_html = markdown::to_html(&body_md);
+        // posprocessing HTML (trivially, so only regex)
+        // 1. make all anchors target a blank page
+        let anchor_re = Regex::new(r"<a\s+href").unwrap();
+        body_html = anchor_re
+            .replace_all(&body_html, "<a target=\"_blank\" href")
+            .to_string();
         Ok(Project {
             metadata,
             body_md,
