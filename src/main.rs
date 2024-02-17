@@ -1,7 +1,7 @@
 use askama::Template;
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
+    http::{header, StatusCode},
     routing::get,
     Router,
 };
@@ -9,8 +9,8 @@ use project::ProjectRelatedLink;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::{env, path};
-use tower_http::services::ServeDir;
 use tower_http::trace::TraceLayer;
+use tower_http::{services::ServeDir, set_header::SetResponseHeader};
 use tracing::Level;
 use tracing_subscriber::FmtSubscriber;
 
@@ -42,10 +42,18 @@ async fn main() {
 
     let static_dir = env::var("STATIC_DIR").unwrap_or("static".to_owned());
     tracing::info!("Serving static files from {}", &static_dir);
+
     let app = Router::new()
         .route("/", get(index))
         .route("/project/:slug", get(project_page))
-        .nest_service("/static", ServeDir::new(static_dir))
+        .nest_service(
+            "/static",
+            SetResponseHeader::if_not_present(
+                ServeDir::new(static_dir),
+                header::CACHE_CONTROL,
+                header::HeaderValue::from_static("max-age=300"),
+            ),
+        )
         .layer(TraceLayer::new_for_http())
         .with_state(AppState {
             project_catalog: catalog,
