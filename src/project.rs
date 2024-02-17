@@ -19,6 +19,9 @@ pub struct Metadata {
     pub links: Vec<ProjectRelatedLink>,
 
     pub github: Option<String>,
+
+    #[serde(default = "Vec::new")]
+    pub code_languages: Vec<String>,
 }
 
 #[derive(Clone)]
@@ -103,6 +106,9 @@ impl ProjectCatalog {
             .read_dir()?
             .filter_map(|maybe_dir_entry| {
                 if let Ok(entry) = maybe_dir_entry {
+                    if entry.file_name() == "template" {
+                        return None;
+                    }
                     let maybe_project = Project::load(&entry.path());
                     if let Ok(project) = maybe_project {
                         return Some(project);

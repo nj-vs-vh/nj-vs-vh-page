@@ -5,7 +5,7 @@ use axum::{
     routing::get,
     Router,
 };
-use project::ProjectRelatedLink;
+use project::Project;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::{env, path};
@@ -107,9 +107,7 @@ async fn index(State(state): State<AppState>) -> Index {
 #[derive(Template)]
 #[template(path = "project.html")]
 struct ProjectPage {
-    title: String,
-    body_html: String,
-    related_links: Vec<ProjectRelatedLink>,
+    project: Project,
 }
 
 async fn project_page(
@@ -119,10 +117,8 @@ async fn project_page(
     let project_match = state.project_catalog.find(&slug);
     if let Some(project) = project_match {
         Ok(ProjectPage {
-            // TODO: less stupid cloning!!!
-            title: project.metadata.title.to_owned(),
-            body_html: project.body_html.to_owned(),
-            related_links: project.metadata.links.to_owned(),
+            // this is stupid!!! clone less!!!
+            project: project.clone(),
         })
     } else {
         Err(StatusCode::NOT_FOUND)

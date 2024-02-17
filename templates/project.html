@@ -3,16 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>nj-vs-vh | {{ title }}</title>
+    <title>nj-vs-vh | {{ project.metadata.title }}</title>
     <link rel="stylesheet" href="/static/style.css" />
-    <link rel="icon" href="/static/favicon.ico"/>
+    <link rel="icon" href="/static/favicon.ico" />
+    {% if project.metadata.code_languages.len() > 0 %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css"
+    />
+    {% for code_lang in project.metadata.code_languages %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/{{code_lang}}.min.js"></script>
+    {% endfor %} {% endif %}
   </head>
+  {% if project.metadata.code_languages.len() > 0 %}
+  <script>
+    hljs.highlightAll();
+  </script>
+  {% endif %}
   <body>
     <header>
       <a href="/"><-</a>
     </header>
-    <h1 style="margin-bottom: 0.3em">{{ title }}</h1>
-    {% if related_links.len() > 0 %}
+    <h1 style="margin-bottom: 0.3em">{{ project.metadata.title }}</h1>
+    {% if project.metadata.links.len() > 0 %}
     <div
       style="
         margin: 1.5rem auto;
@@ -23,12 +37,12 @@
       "
     >
       <strong>links:</strong>
-      {% for link in related_links %}
+      {% for link in project.metadata.links %}
       <a href="{{link.url}}" target="_blank">{{ link.name }}</a>
       {% endfor %}
     </div>
     {% endif %}
-    <div>{{ body_html|escape("none") }}</div>
+    <div>{{ project.body_html|escape("none") }}</div>
     {% include "license_footer.html" %}
   </body>
 </html>

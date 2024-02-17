@@ -1,0 +1,7 @@
+title: project name
+slug: project-slug
+github: https://github.com/nj-vs-vh/project
+code_languages:
+  # refers to language packages of highlight.js CDN
+  # see https://highlightjs.org/
+  - python
