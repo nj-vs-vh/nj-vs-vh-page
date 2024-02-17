@@ -68,7 +68,7 @@ impl Project {
 
         // preprocessing Markdown
         // 1. insert a nicer typography
-        body_md = body_md.replace("--", "—");
+        body_md = body_md.replace("--", "—"); // TODO don't do it in code blocks!!!
 
         let mut body_html = markdown::to_html(&body_md);
         // posprocessing HTML (trivially, so only regex)
