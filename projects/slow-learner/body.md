@@ -17,7 +17,7 @@ gh api \
 slow-learner learn --spread --type-name Release data.json 
 ```
 
-this generates the following code in (`black`ed for readability):
+this generates the following code (`black`ed for readability):
 
 ```python
 """
