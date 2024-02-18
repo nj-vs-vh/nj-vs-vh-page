@@ -1,9 +1,9 @@
 there are [multiple tools](https://stackoverflow.com/a/30294535/14418929) to infer JSON Schema spec
 from an example or a set of examples of JSON documents. however,
 - i profoundly dislike JSON Schema as a format
-- i like inventing bicycles
+- to get python typing, i would need to use another tool to convert JSON Schema -> Python (e.g. [this](https://github.com/sbrunner/jsonschema-gentypes) one)
 
-so i made my own thing, a library/CLI that consumes a stream of values (for CLI -- JSON documents)
+so i made my own thing, a library + CLI that consumes a stream of values (for CLI --- JSON documents)
 and generates python code to describe it. the usage is:
 
 ```bash
@@ -18,7 +18,7 @@ gh api \
 slow-learner learn --spread --type-name Repo --output-file repo.py data.json
 ```
 
-this generates the following code (i've `black`ed it for readability):
+this generates the following code (`black`ed for readability):
 
 ```python
 """
@@ -196,10 +196,10 @@ class Repo(TypedDict):
 ```
 
 my favorite feature is that it learns [`Literal`](https://docs.python.org/3/library/typing.html#typing.Literal)
-types for fields where not too many (10 by default) distinct values were present. for my case, it contains a lot 
-of false positive (e.g. `Literal[False]` where type really should be `bool`), but it's trivial to edit by hand.
+types for fields where not too many (10 by default) distinct values were present. for my case, it contains some
+false positives (e.g. `Literal[False]` where type really should be `bool`), but it's trivial to edit by hand.
 
-the library is fairly well-tested both by autotests and my own use for real-world problems. i use
-it whenever i need to work with a new JSON data for longer than 5 minutes.
+the library is fairly well-tested both by autotests and my own use for real-world problems. i use it whenever
+i need to work with a new JSON data for longer than 5 minutes.
 
 oh, and the name is a reference to [this song](https://www.youtube.com/watch?v=eQUmeJspwuc) :)
