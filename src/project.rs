@@ -68,9 +68,11 @@ impl Project {
 
         // preprocessing Markdown
         // 1. insert a nicer typography
-        body_md = body_md.replace("---", "—"); // TODO don't do it in code blocks!!!
+        body_md = body_md.replace("---", "—");
 
-        let mut body_html = markdown::to_html(&body_md);
+        let mut options = comrak::Options::default();
+        options.render.unsafe_ = true;
+        let mut body_html = comrak::markdown_to_html(&body_md, &options);
         // posprocessing HTML (trivially, so only regex)
         // 1. make all anchors target a blank page
         let anchor_re = Regex::new(r"<a\s+href").unwrap();
