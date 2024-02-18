@@ -15,7 +15,9 @@ so my spin on the idea:
   [Wreckage System](https://65daysofstatic.com/WreckageSystems_FAQ) project by 65daysofstatic (tl;dr:
   it's a [live broadcast](https://www.youtube.com/watch?v=z2Ox0Up7IUc) of generatively composed music).
 
-here's an example of the simulation:
+here's an example of the simulation (it is a randomly chosen video from a 2-year archive, so if you
+don't like what you see, just refresh the page; some video lack sound because my sound scraping code
+was broken for a while):
 
 <script>
   // this is a script that generates telegram embedding script https://core.telegram.org/widgets/post
