@@ -1,6 +1,11 @@
 title: project name
 slug: project-slug
 github: https://github.com/nj-vs-vh/project
+links:
+  - name: some link 1
+    url: https://example.com
+  - name: some link 2
+    url: https://example.com
 code_languages:
   # refers to language packages of highlight.js CDN
   # see https://highlightjs.org/
