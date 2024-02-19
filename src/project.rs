@@ -140,7 +140,7 @@ impl ProjectCatalog {
         Ok(ProjectCatalog { projects })
     }
 
-    pub fn find(&self, slug: &str) -> Option<&Project> {
+    pub fn find<'a>(&'a self, slug: &str) -> Option<&'a Project> {
         self.projects.iter().find(|&p| {
             if let Some(project_slug) = p.metadata.slug.as_deref() {
                 project_slug == slug
