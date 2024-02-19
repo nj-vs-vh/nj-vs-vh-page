@@ -23,7 +23,7 @@ of the game.
 
 ![minesweeper screenshot --- fast-forwarding](media/minesweeper-2.png)
 
-## brute-force search for possible combinations.
+## brute-force search
 
 who needs a "smart" or "intelligent" solution when our modern computers are fast enough to churn through millions
 of possibilities and check them all? i wanted to make a *cartoonishly* simple solver, so my algorithm is:
