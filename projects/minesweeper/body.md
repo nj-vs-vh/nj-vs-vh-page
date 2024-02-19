@@ -36,8 +36,8 @@ the results are visualized on the board.
 ![minesweeper screenshot --- brute-forcing](media/minesweeper-3.png)
 
 if anything, this algorithm is exhaustive! here it finds a guaranteed mine at `S0` (that is very easy to find
-by inference), but also decidedly tells me that other cells will require guessing and there is no clever inference
-to look for. but also, this guessing is now guided by probabilities, which in theory gives the layer an advantage.
+by inference), but also decidedly tells me that other cells will require guessing and *there is no clever way
+to look for*. but also, this guessing is now guided by probabilities, which in theory gives the player an advantage.
 
 the downside, of course, is that it's incredibly ineffective, so it is only feasible in the endgame. on the
 other hand, the endgame is when the bulk of guesswork typically occurs, so it's also the most useful there.

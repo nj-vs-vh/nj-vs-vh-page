@@ -42,7 +42,12 @@
       {% endfor %}
     </div>
     {% endif %}
-    <div>{{ project.body_html|escape("none") }}</div>
+    <div class="project-body">{{ project.body_html|escape("none") }}</div>
     {% include "license_footer.html" %}
   </body>
 </html>
+<style>
+  .project-body > p {
+    text-align: justify;
+  }
+</style>
