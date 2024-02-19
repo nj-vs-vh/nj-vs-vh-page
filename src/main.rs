@@ -30,18 +30,33 @@ async fn main() {
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
     tracing::info!("Debug = {}, log level = {}", is_debug, log_level);
 
+    let static_dir_string = env::var("STATIC_DIR").unwrap_or("static".to_owned());
+    let static_dir = std::path::Path::new(&static_dir_string);
+    tracing::info!("Serving static files from {:?}", &static_dir);
+    let project_media_dir = static_dir.join("media");
+    if let Ok(dir_iter) = project_media_dir.read_dir() {
+        dir_iter.for_each(|file| {
+            if let Ok(file) = file {
+                if let Err(e) = std::fs::remove_file(file.path()) {
+                    tracing::warn!("Error deleting stale media file {:?}: {}", file.path(), e);
+                }
+            }
+        })
+    }
+    if let Err(e) = std::fs::create_dir_all(&project_media_dir) {
+        tracing::error!("Error creating media dir {:?}: {}", project_media_dir, e);
+        return;
+    };
+
     let projects_dir = env::var("PROJECTS_DIR").unwrap_or("projects".to_owned());
-    tracing::info!("Reading project catalog from {}", &projects_dir);
-    let catalog_res = project::ProjectCatalog::load(path::Path::new(&projects_dir));
+    let catalog_res =
+        project::ProjectCatalog::load(path::Path::new(&projects_dir), &project_media_dir);
     if let Err(e) = catalog_res {
         tracing::error!("Failed to load project catalog: {}", e);
         return;
     }
     let catalog = catalog_res.unwrap();
-    tracing::info!("Read project catalog: {}", &catalog);
-
-    let static_dir = env::var("STATIC_DIR").unwrap_or("static".to_owned());
-    tracing::info!("Serving static files from {}", &static_dir);
+    tracing::info!("Loaded project catalog: {}", &catalog);
 
     let app = Router::new()
         .route("/", get(index))
@@ -50,6 +65,14 @@ async fn main() {
             "/static",
             SetResponseHeader::if_not_present(
                 ServeDir::new(static_dir),
+                header::CACHE_CONTROL,
+                header::HeaderValue::from_static("max-age=300"),
+            ),
+        )
+        .nest_service(
+            "/project/media",
+            SetResponseHeader::if_not_present(
+                ServeDir::new(&project_media_dir),
                 header::CACHE_CONTROL,
                 header::HeaderValue::from_static("max-age=300"),
             ),

@@ -42,15 +42,16 @@ impl std::fmt::Debug for Project {
 }
 
 impl Project {
-    pub fn load(dir: &Path) -> io::Result<Project> {
-        tracing::info!("loading project from {:?}", dir);
+    pub fn load(dir: &Path, project_media_dir: &Path) -> io::Result<Project> {
+        tracing::info!("Loading project from {:?}", dir);
         if !dir.is_dir() {
             return Err(io::Error::other("path must be a directory".to_owned()));
         }
 
+        // loading metadata
         let mut metadata: Metadata = serde_yaml::from_reader(File::open(dir.join("meta.yaml"))?)
             .map_err(|e| io::Error::other(e.to_string()))?;
-        // metadata pre-processing to handle non-trivial defaults
+        // pre-processing to handle non-trivial defaults
         if metadata.slug == None {
             metadata.slug = Some(slugify!(&metadata.title, max_length = 64));
         }
@@ -64,21 +65,33 @@ impl Project {
             )
         }
 
+        // loading project description body
         let mut body_md = std::io::read_to_string(File::open(dir.join("body.md"))?)?;
-
-        // preprocessing Markdown
-        // 1. insert a nicer typography
+        // preprocessing Markdown: insert nicer typography
         body_md = body_md.replace("---", "—");
-
         let mut options = comrak::Options::default();
         options.render.unsafe_ = true;
         let mut body_html = comrak::markdown_to_html(&body_md, &options);
         // posprocessing HTML (trivially, so only regex)
-        // 1. make all anchors target a blank page
+        // make all anchors target a blank page
         let anchor_re = Regex::new(r"<a\s+href").unwrap();
         body_html = anchor_re
             .replace_all(&body_html, "<a target=\"_blank\" href")
             .to_string();
+
+        // copying media to a dedicated dir
+        let media_dir = dir.join("media");
+        if media_dir.exists() && media_dir.is_dir() {
+            for file in media_dir.read_dir()? {
+                if let Ok(file) = file {
+                    let target_file = project_media_dir.join(file.file_name());
+                    if target_file.exists() {
+                        return Err(io::Error::other(format!("Project media {:?} name is duplicated, conflicting with an already loaded project", file.path())));
+                    }
+                    std::fs::copy(file.path(), &target_file)?;
+                }
+            }
+        }
         Ok(Project {
             metadata,
             body_md,
@@ -102,8 +115,12 @@ impl std::fmt::Display for ProjectCatalog {
 }
 
 impl ProjectCatalog {
-    pub fn load(projects_dir: &Path) -> io::Result<ProjectCatalog> {
-        tracing::info!("loading project catalog from {:?}", projects_dir);
+    pub fn load(projects_dir: &Path, project_media_dir: &Path) -> io::Result<ProjectCatalog> {
+        tracing::info!(
+            "Loading project catalog from {:?}, copying media into {:?}",
+            projects_dir,
+            project_media_dir
+        );
         let projects: Vec<Project> = projects_dir
             .read_dir()?
             .filter_map(|maybe_dir_entry| {
@@ -111,13 +128,13 @@ impl ProjectCatalog {
                     if entry.file_name() == "template" {
                         return None;
                     }
-                    let maybe_project = Project::load(&entry.path());
+                    let maybe_project = Project::load(&entry.path(), project_media_dir);
                     if let Ok(project) = maybe_project {
                         return Some(project);
                     } else {
                         tracing::warn!(
                             "failed to load project from {:?}: {:?}",
-                            entry,
+                            entry.path(),
                             maybe_project
                         );
                     }
