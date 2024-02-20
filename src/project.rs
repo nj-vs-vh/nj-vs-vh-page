@@ -66,11 +66,13 @@ impl Project {
         }
 
         // loading project description body
-        let mut body_md = std::io::read_to_string(File::open(dir.join("body.md"))?)?;
+        let body_md = std::io::read_to_string(File::open(dir.join("body.md"))?)?;
         // preprocessing Markdown: insert nicer typography
-        body_md = body_md.replace("---", "—");
+        // body_md = body_md.replace("---", "—");
         let mut options = comrak::Options::default();
         options.render.unsafe_ = true;
+        options.parse.smart = true;
+        options.extension.strikethrough = true;
         let mut body_html = comrak::markdown_to_html(&body_md, &options);
         // posprocessing HTML (trivially, so only regex)
         // make all anchors target a blank page
@@ -84,6 +86,17 @@ impl Project {
         if media_dir.exists() && media_dir.is_dir() {
             for file in media_dir.read_dir()? {
                 if let Ok(file) = file {
+                    let first_char = file
+                        .file_name()
+                        .to_str()
+                        .unwrap()
+                        .chars()
+                        .take(1)
+                        .next()
+                        .unwrap();
+                    if first_char == '.' {
+                        continue;
+                    }
                     let target_file = project_media_dir.join(file.file_name());
                     if target_file.exists() {
                         return Err(io::Error::other(format!("Project media {:?} name is duplicated, conflicting with an already loaded project", file.path())));
@@ -125,7 +138,7 @@ impl ProjectCatalog {
             .read_dir()?
             .filter_map(|maybe_dir_entry| {
                 if let Ok(entry) = maybe_dir_entry {
-                    if entry.file_name() == "template" {
+                    if entry.file_name() == "template" || !entry.path().is_dir() {
                         return None;
                     }
                     let maybe_project = Project::load(&entry.path(), project_media_dir);
@@ -133,7 +146,7 @@ impl ProjectCatalog {
                         return Some(project);
                     } else {
                         tracing::warn!(
-                            "failed to load project from {:?}: {:?}",
+                            "Failed to load project from {:?}: {:?}",
                             entry.path(),
                             maybe_project
                         );
