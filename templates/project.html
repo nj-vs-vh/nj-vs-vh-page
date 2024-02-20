@@ -6,6 +6,7 @@
     <title>nj-vs-vh | {{ project.metadata.title }}</title>
     <link rel="stylesheet" href="/static/style.css" />
     <link rel="icon" href="/static/favicon.ico" />
+    <!-- highligh.js setup -->
     {% if project.metadata.code_languages.len() > 0 %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <link
@@ -15,6 +16,12 @@
     {% for code_lang in project.metadata.code_languages %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/{{code_lang}}.min.js"></script>
     {% endfor %} {% endif %}
+    <!-- mathjax setup -->
+    {% if project.metadata.math %}
+    <!--  -->
+    {% include "mathjax_setup.html" %}
+    <!--  -->
+    {% endif %}
   </head>
   {% if project.metadata.code_languages.len() > 0 %}
   <script>

@@ -22,6 +22,13 @@ pub struct Metadata {
 
     #[serde(default = "Vec::new")]
     pub code_languages: Vec<String>,
+
+    #[serde(default = "default_math")]
+    pub math: bool,
+}
+
+fn default_math() -> bool {
+    false
 }
 
 #[derive(Clone)]

@@ -17,9 +17,9 @@ then, i added two features to address the two mentioned frustrations
 
 ## fast-forwarding
 
-if an N-mine cell has K marked mines nearby and N-K unopened neighbor cells, assuming the first K marked mines
-are correct, we can safely open all N-K neighbors. by doing this in the loop we can "fast-forward" the game until
-the next non-trivial situation occurs.
+if an $n$-mine cell has $k$ marked mines nearby and $n-k$ unopened neighbor cells, assuming the first $k$
+marked mines are correct, we can safely open all $n-k$ neighbors. by doing this in the loop we can
+"fast-forward" the game until the next non-trivial situation occurs.
 
 this feature is very simple so that it doesn't feel like cheating, but also eliminates the most boring parts
 of the game.

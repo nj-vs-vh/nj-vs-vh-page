@@ -6,5 +6,6 @@ greatly inspired by [fasterthanlime blog](https://fasterthanli.me/)
 
 ## features
 - project descriptions are written in markdown with some custom extensions
-- code blocks with highlighting (with [highlight.js](https://highlightjs.org/))
+- code blocks with highlighting with [highlight.js](https://highlightjs.org/)
+- latex-style math with [MathJax](https://www.mathjax.org/)
 - per-project media files
