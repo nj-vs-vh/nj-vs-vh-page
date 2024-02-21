@@ -1,9 +1,9 @@
 title: advent of code
 slug: advent-of-code
 links:
-  - name: 2021 (rust)
+  - name: 2021
     url: https://github.com/nj-vs-vh/advent-of-code-2021
-  - name: 2022 (rust, unfinished)
+  - name: 2022
     url: https://github.com/nj-vs-vh/advent-of-code-2022
-  - name: 2023 (python)
+  - name: 2023
     url: https://github.com/nj-vs-vh/advent-of-code-2023

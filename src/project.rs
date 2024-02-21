@@ -11,6 +11,44 @@ pub struct ProjectRelatedLink {
 }
 
 #[derive(Deserialize, Debug, Clone)]
+pub struct Date {
+    pub year: u16,
+    pub month: Option<u16>,
+    pub day: Option<u16>,
+}
+
+impl std::fmt::Display for Date {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut parts: Vec<String> = Vec::new();
+        if let Some(d) = self.day {
+            parts.push(d.to_string());
+        }
+        if let Some(m) = self.month {
+            parts.push(
+                match m {
+                    1 => "Jan",
+                    2 => "Feb",
+                    3 => "Mar",
+                    4 => "Apr",
+                    5 => "May",
+                    6 => "Jun",
+                    7 => "Jul",
+                    8 => "Aug",
+                    9 => "Sep",
+                    10 => "Oct",
+                    11 => "Nov",
+                    12 => "Dec",
+                    _ => "",
+                }
+                .to_owned(),
+            );
+        }
+        parts.push(self.year.to_string());
+        f.write_str(&parts.join(" "))
+    }
+}
+
+#[derive(Deserialize, Debug, Clone)]
 pub struct Metadata {
     pub title: String,
     pub slug: Option<String>,
@@ -25,6 +63,9 @@ pub struct Metadata {
 
     #[serde(default = "default_math")]
     pub math: bool,
+
+    pub start: Option<Date>,
+    pub end: Option<Date>,
 }
 
 fn default_math() -> bool {

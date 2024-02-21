@@ -33,16 +33,18 @@
       <a href="/"><-</a>
     </header>
     <h1 style="margin-bottom: 0.3em">{{ project.metadata.title }}</h1>
+    <div class="subheading-block">
+      {% match project.metadata.start %} {% when Some with (start) %}
+      <!--  -->
+      {{ start }}
+      <!--  -->
+      {% match project.metadata.end %} {% when Some with (end) %} – {{ end }} {%
+      when None %} {% endmatch %}
+      <!--  -->
+      {% when None %} {% endmatch %}
+    </div >
     {% if project.metadata.links.len() > 0 %}
-    <div
-      style="
-        margin: 1.5rem auto;
-        display: flex;
-        flex-direction: row;
-        gap: 1rem;
-        align-items: baseline;
-      "
-    >
+    <div class="subheading-block">
       <strong>links:</strong>
       {% for link in project.metadata.links %}
       <a href="{{link.url}}" target="_blank">{{ link.name }}</a>
@@ -56,5 +58,13 @@
 <style>
   .project-body > p {
     text-align: justify;
+  }
+
+  .subheading-block {
+    margin: 1rem auto;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: baseline;
   }
 </style>

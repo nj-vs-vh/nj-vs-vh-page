@@ -1,4 +1,10 @@
 title: project name
+start:
+  year: 2024
+  month: 2
+end:
+  year: 2025
+  month: 6
 slug: project-slug
 github: https://github.com/nj-vs-vh/project
 links:

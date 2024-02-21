@@ -1,4 +1,7 @@
 title: solar system disruption simulation
+start:
+  year: 2022
+  month: 2
 slug: solar-system-disruption-bot
 github: https://github.com/nj-vs-vh/solar-system-disruption-bot
 links:
