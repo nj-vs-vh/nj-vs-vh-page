@@ -51,6 +51,9 @@
         <a href="/tags?q={{tag.name}}" target="_blank">{{ tag.name }}</a>
         {% endfor %}
       </div>
+      {% endif %}
+      <!--  -->
+      {% if project.metadata.links.len() > 0 %}
       <div class="group">
         <strong>links:</strong>
         {% for link in project.metadata.links %}
