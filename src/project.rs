@@ -49,6 +49,12 @@ impl std::fmt::Display for Date {
 }
 
 #[derive(Deserialize, Debug, Clone)]
+pub struct Tag {
+    pub prefix: String,
+    pub name: String,
+}
+
+#[derive(Deserialize, Debug, Clone)]
 pub struct Metadata {
     pub title: String,
     pub slug: Option<String>,
@@ -66,6 +72,11 @@ pub struct Metadata {
 
     pub start: Option<Date>,
     pub end: Option<Date>,
+
+    #[serde(default = "Vec::new", alias = "tags")]
+    tags_raw: Vec<String>,
+    #[serde(default = "Vec::new")]
+    pub tags: Vec<Tag>,
 }
 
 fn default_math() -> bool {
@@ -111,6 +122,17 @@ impl Project {
                     url: github_link_url.clone(),
                 },
             )
+        }
+        // post-parsing tags
+        for tag_raw in metadata.tags_raw.iter() {
+            if let Some((prefix, body)) = tag_raw.split_once(":") {
+                metadata.tags.push(Tag {
+                    prefix: prefix.to_owned(),
+                    name: body.to_owned(),
+                })
+            } else {
+                return Err(io::Error::other(format!("invalid tag: {}", tag_raw)));
+            }
         }
 
         // loading project description body

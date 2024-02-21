@@ -33,24 +33,32 @@
       <a href="/"><-</a>
     </header>
     <h1 style="margin-bottom: 0.3em">{{ project.metadata.title }}</h1>
-    <div class="subheading-block">
-      {% match project.metadata.start %} {% when Some with (start) %}
-      <!--  -->
-      {{ start }}
-      <!--  -->
-      {% match project.metadata.end %} {% when Some with (end) %} – {{ end }} {%
-      when None %} {% endmatch %}
-      <!--  -->
-      {% when None %} {% endmatch %}
-    </div >
-    {% if project.metadata.links.len() > 0 %}
-    <div class="subheading-block">
-      <strong>links:</strong>
-      {% for link in project.metadata.links %}
-      <a href="{{link.url}}" target="_blank">{{ link.name }}</a>
-      {% endfor %}
+    <div class="stack">
+      <div>
+        {% match project.metadata.start %} {% when Some with (start) %}
+        <!--  -->
+        {{ start }}
+        <!--  -->
+        {% match project.metadata.end %} {% when Some with (end) %} – {{ end }}
+        {% when None %} {% endmatch %}
+        <!--  -->
+        {% when None %} {% endmatch %}
+      </div>
+      {% if project.metadata.tags.len() > 0 %}
+      <div>
+        <strong>tags:</strong>
+        {% for tag in project.metadata.tags %}
+        <a href="/tags?q={{tag.name}}" target="_blank">{{ tag.name }}</a>
+        {% endfor %}
+      </div>
+      <div class="group">
+        <strong>links:</strong>
+        {% for link in project.metadata.links %}
+        <a href="{{link.url}}" target="_blank">{{ link.name }}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
     </div>
-    {% endif %}
     <div class="project-body">{{ project.body_html|escape("none") }}</div>
     {% include "license_footer.html" %}
   </body>
@@ -60,8 +68,13 @@
     text-align: justify;
   }
 
-  .subheading-block {
-    margin: 1rem auto;
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .group {
     display: flex;
     flex-direction: row;
     gap: 1rem;

@@ -16,3 +16,6 @@ code_languages:
   # refers to language packages of highlight.js CDN
   # see https://highlightjs.org/
   - python
+tags:
+  - code:python
+  - platform:web
