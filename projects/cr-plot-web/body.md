@@ -8,7 +8,7 @@ thinking about browser-based visualizations for scientific data presentation, an
 to give it a go. basically, i just compiled all the plot's data to a JSON document and wrote some
 Javascript to render it using [Plotly](https://plotly.com/javascript/).
 
-[here](/cosmic-rays-spectrum) is the same plot displayed in the browser. the nice thing is that
+[here](https://cosmic-rays-spectrum.nj-vs-vh.name) is the same plot displayed in the browser. the nice thing is that
 it is completely static and self-contained --- libraries are loaded from CDN.
 
 besides the ability to toggle different experiments on and off, the only real innovation with
