@@ -41,4 +41,4 @@ was broken for a while):
 
 ## notable realizations
 
-- [two jupyter's debris geenrated in bound state, moving as a binary system](https://t.me/solar_system_disruption/1521)
+- [two jupyter's debris generated in a bound state, moving as a binary](https://t.me/solar_system_disruption/1521)
