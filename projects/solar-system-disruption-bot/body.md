@@ -25,7 +25,7 @@ was broken for a while):
   const tgScript = document.createElement("script");
   tgScript.setAttribute("async", "");
   tgScript.setAttribute("src","https://telegram.org/js/telegram-widget.js?22");
-  tgScript.setAttribute("data-telegram-post", `solar_system_disruption/${1 + Math.floor(Math.random() * 1465)}`);
+  tgScript.setAttribute("data-telegram-post", `solar_system_disruption/${1 + Math.floor(Math.random() * 1521)}`);
   tgScript.setAttribute("data-width", "100%");
   tgScript.setAttribute("data-color", "343638");
   tgScript.setAttribute("data-dask-color", "FFFFFF");
@@ -34,6 +34,11 @@ was broken for a while):
 
 ## technical details
 
-- simulation uses `scipy`'s solver for matrix-formulated Newton's law
-- animation is done in `matplotlib` because why not?
+- simulation uses `scipy`'s solver for matrix-form Newton's law
+  (again, inspired by [this project](https://t.me/solar_system_disruption/1521))
+- animation is done in `matplotlib`
 - sounds are added using `ffmpeg`
+
+## notable realizations
+
+- [two jupyter's debris geenrated in bound state, moving as a binary system](https://t.me/solar_system_disruption/1521)
