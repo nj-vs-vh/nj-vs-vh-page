@@ -23,14 +23,15 @@ SPA in Svelte to render them. the basic idea for the reader was that there are t
   and symbol of the text.
 
 over time, I added many features such as
-- simple user accounts (with closed sign-up to prevent unexpected DB load, if you're interested,
-  just let me know)
+- simple user accounts. the sign-up is closed to prevent unexpected DB load, if you're interested,
+  just let me know
 - "likes" for commentaries; I decided to not add "likes" for verses as it felt a bit sacrificial
   to let users mark a part of the sacred text as favorite
 - user-written notes for each verse
 - full-text search across translations and commentary
 - various quality-of-life improvements for reading and note-keeping
 
-overall, this is probably my favorite project to date. not only did it let me interact with complex and religiously
-significant texts (given the fact that textuality is an integral feature of Judaism), but it serves a small
-but dense community around me, I love making changes on their request and getting feedback from them.
+overall, this is probably my favorite project to date. not only did it let me intimately interact with
+complex and religiously significant texts (given the fact that textuality is an integral feature of Judaism),
+but it serves a small but dense community around me, I love making changes on their request and getting
+feedback from them.
