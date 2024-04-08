@@ -1,6 +1,6 @@
-title: yarb (yet another redis backup)
+title: yarb (yet another redis backup) utility
 start:
   year: 2023
-  month: 8
+  month: 7
 slug: yarb
 github: https://github.com/bots-against-war/yarb
