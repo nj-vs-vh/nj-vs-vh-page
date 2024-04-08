@@ -1,51 +1,13 @@
 use regex::Regex;
-use slugify::slugify;
 use std::{fs::File, io, path::Path};
 
+use crate::date::Date;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct ProjectRelatedLink {
     pub name: String,
     pub url: String,
-}
-
-#[derive(Deserialize, Debug, Clone)]
-pub struct Date {
-    pub year: u16,
-    pub month: Option<u16>,
-    pub day: Option<u16>,
-}
-
-impl std::fmt::Display for Date {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut parts: Vec<String> = Vec::new();
-        if let Some(d) = self.day {
-            parts.push(d.to_string());
-        }
-        if let Some(m) = self.month {
-            parts.push(
-                match m {
-                    1 => "Jan",
-                    2 => "Feb",
-                    3 => "Mar",
-                    4 => "Apr",
-                    5 => "May",
-                    6 => "Jun",
-                    7 => "Jul",
-                    8 => "Aug",
-                    9 => "Sep",
-                    10 => "Oct",
-                    11 => "Nov",
-                    12 => "Dec",
-                    _ => "",
-                }
-                .to_owned(),
-            );
-        }
-        parts.push(self.year.to_string());
-        f.write_str(&parts.join(" "))
-    }
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -57,7 +19,7 @@ pub struct Tag {
 #[derive(Deserialize, Debug, Clone)]
 pub struct Metadata {
     pub title: String,
-    pub slug: Option<String>,
+    pub slug: String,
 
     #[serde(default = "Vec::new")]
     pub links: Vec<ProjectRelatedLink>,
@@ -70,7 +32,7 @@ pub struct Metadata {
     #[serde(default = "default_math")]
     pub math: bool,
 
-    pub start: Option<Date>,
+    pub start: Date,
     pub end: Option<Date>,
 
     #[serde(default = "Vec::new", alias = "tags")]
@@ -110,10 +72,6 @@ impl Project {
         // loading metadata
         let mut metadata: Metadata = serde_yaml::from_reader(File::open(dir.join("meta.yaml"))?)
             .map_err(|e| io::Error::other(e.to_string()))?;
-        // pre-processing to handle non-trivial defaults
-        if metadata.slug == None {
-            metadata.slug = Some(slugify!(&metadata.title, max_length = 64));
-        }
         if let Some(ref github_link_url) = metadata.github {
             metadata.links.insert(
                 0,
@@ -204,7 +162,7 @@ impl ProjectCatalog {
             projects_dir,
             project_media_dir
         );
-        let projects: Vec<Project> = projects_dir
+        let mut projects: Vec<Project> = projects_dir
             .read_dir()?
             .filter_map(|maybe_dir_entry| {
                 if let Ok(entry) = maybe_dir_entry {
@@ -225,12 +183,10 @@ impl ProjectCatalog {
                 None
             })
             .collect();
+        projects.sort_by(|a, b| a.metadata.start.cmp(&b.metadata.start));
 
         // validating slug uniqueness
-        let mut slugs: Vec<String> = projects
-            .iter()
-            .filter_map(|p| p.metadata.slug.clone())
-            .collect();
+        let mut slugs: Vec<String> = projects.iter().map(|p| p.metadata.slug.clone()).collect();
         slugs.sort();
         slugs.dedup();
         if slugs.len() != projects.len() {
@@ -241,12 +197,6 @@ impl ProjectCatalog {
     }
 
     pub fn find<'a>(&'a self, slug: &str) -> Option<&'a Project> {
-        self.projects.iter().find(|&p| {
-            if let Some(project_slug) = p.metadata.slug.as_deref() {
-                project_slug == slug
-            } else {
-                false
-            }
-        })
+        self.projects.iter().find(|&p| p.metadata.slug == slug)
     }
 }

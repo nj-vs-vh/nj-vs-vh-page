@@ -44,15 +44,22 @@
         gosha.vaiman@gmail.com
       </li>
     </ul>
-    <h3>my projects in random order</h3>
-    <p><em>unfinished</em></p>
+    <h3>my projects</h3>
     <ul>
       {% for project_href in project_hrefs %}
       <li>
-        <a href="project/{{ project_href.slug }}">{{ project_href.title }}</a>
+        <a href="projects/{{ project_href.slug }}">{{ project_href.title }}</a>
       </li>
       {% endfor %}
+      <li class="see-more">
+        <a href="projects">...full list →</a>
+      </li>
     </ul>
     {% include "license_footer.html" %}
   </body>
 </html>
+<style>
+  li.see-more::marker {
+    color: transparent;
+  }
+</style>

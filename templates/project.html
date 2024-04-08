@@ -34,16 +34,7 @@
     </header>
     <h1 style="margin-bottom: 0.3em">{{ project.metadata.title }}</h1>
     <div class="stack">
-      <div>
-        {% match project.metadata.start %} {% when Some with (start) %}
-        <!--  -->
-        {{ start }}
-        <!--  -->
-        {% match project.metadata.end %} {% when Some with (end) %} – {{ end }}
-        {% when None %} {% endmatch %}
-        <!--  -->
-        {% when None %} {% endmatch %}
-      </div>
+      <div>{{ project.metadata.start }}</div>
       {% if project.metadata.tags.len() > 0 %}
       <div>
         <strong>tags:</strong>

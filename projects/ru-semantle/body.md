@@ -8,4 +8,4 @@ it is fun to play, but language intuition always works better in your native lan
 in my case, it's russian. so, using an open-source embeddings 
 [`navec`](https://github.com/natasha/navec) and a couple of other NLP tools,
 i hacked together a clone. also, i had a lot of fun writing frontend in svelte and fell
-in love with this framework.
+in love with this framework!

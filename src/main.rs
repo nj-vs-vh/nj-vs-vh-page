@@ -5,6 +5,7 @@ use axum::{
     routing::get,
     Router,
 };
+use date::Date;
 use project::Project;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
@@ -14,6 +15,7 @@ use tower_http::{services::ServeDir, set_header::SetResponseHeader};
 use tracing::Level;
 use tracing_subscriber::FmtSubscriber;
 
+mod date;
 mod project;
 
 #[derive(Clone)]
@@ -60,7 +62,9 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(index))
-        .route("/project/:slug", get(project_page))
+        .route("/projects", get(project_list))
+        .route("/projects/", get(project_list))
+        .route("/projects/:slug", get(project_page))
         .nest_service(
             "/static",
             SetResponseHeader::if_not_present(
@@ -70,7 +74,7 @@ async fn main() {
             ),
         )
         .nest_service(
-            "/project/media",
+            "/projects/media",
             SetResponseHeader::if_not_present(
                 ServeDir::new(&project_media_dir),
                 header::CACHE_CONTROL,
@@ -96,6 +100,17 @@ async fn main() {
 struct ProjectHref {
     title: String,
     slug: String,
+    start: Date,
+}
+
+impl ProjectHref {
+    fn from_project(p: &Project) -> ProjectHref {
+        ProjectHref {
+            title: p.metadata.title.to_owned(),
+            slug: p.metadata.slug.to_owned(),
+            start: p.metadata.start.to_owned(),
+        }
+    }
 }
 
 #[derive(Template)]
@@ -105,24 +120,32 @@ struct Index {
 }
 
 async fn index(State(state): State<AppState>) -> Index {
-    let mut project_hrefs: Vec<ProjectHref> = state
-        .project_catalog
-        .projects
-        .iter()
-        .filter_map(|p| {
-            if let Some(slug) = p.metadata.slug.as_deref() {
-                Some(ProjectHref {
-                    title: p.metadata.title.to_owned(),
-                    slug: slug.to_owned(),
-                })
-            } else {
-                None
-            }
-        })
-        .collect();
     let mut rng = thread_rng();
-    project_hrefs.shuffle(&mut rng);
-    Index { project_hrefs }
+    Index {
+        project_hrefs: state
+            .project_catalog
+            .projects
+            .choose_multiple(&mut rng, 5)
+            .map(ProjectHref::from_project)
+            .collect(),
+    }
+}
+
+#[derive(Template)]
+#[template(path = "project_list.html")]
+struct ProjectList {
+    project_hrefs: Vec<ProjectHref>,
+}
+
+async fn project_list(State(state): State<AppState>) -> ProjectList {
+    ProjectList {
+        project_hrefs: state
+            .project_catalog
+            .projects
+            .iter()
+            .map(ProjectHref::from_project)
+            .collect(),
+    }
 }
 
 // project page

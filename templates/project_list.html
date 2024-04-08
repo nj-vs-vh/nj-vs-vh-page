@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nj-vs-vh | projects</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="icon" href="/static/favicon.ico" />
+  </head>
+  <body>
+    <header>
+      <a href="/">home</a>
+    </header>
+    <h1>projects</h1>
+    <!-- <h1 style="margin-bottom: 0.3em">projects</h1> -->
+    <ul>
+      {% for project_href in project_hrefs %}
+      <li>
+        <a href="projects/{{ project_href.slug }}">{{ project_href.title }} ({{project_href.start}})</a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% include "license_footer.html" %}
+  </body>
+</html>
