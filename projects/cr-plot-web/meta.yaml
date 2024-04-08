@@ -5,5 +5,7 @@ start:
   month: 1
 github: https://github.com/nj-vs-vh/The_CR_Spectrum
 links:
-  - name: original plot repo
+  - name: plot
+    url: https://cosmic-rays-spectrum.nj-vs-vh.name/
+  - name: upstream plot repo
     url: https://github.com/carmeloevoli/The_CR_Spectrum
