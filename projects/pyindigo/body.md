@@ -10,10 +10,10 @@ i developed the library primarily for [SIT telemetry monitoring tool](/projects/
 it is split into:
 - "core" level --- a set of functions with direct bindings to `indigo`'s message bus via python
   C API
-- "models" --- several classes modelling "entities" in the system (driver, device) that
+- "models" --- several classes modeling "entities" in the system (driver, device) that
   attempt to streamline some common tasks
 
 unfortunately, with no access to a wide variety of astronomical hardware, i was unable to
 properly test my library and build anything more sophisticated than a single camera going
-**snap**. i would be happy to return to this someday, but for now this remains an extremely
+**snap**. i would be happy to return to this someday, but for now, this remains a very
 limited and untested prototype.

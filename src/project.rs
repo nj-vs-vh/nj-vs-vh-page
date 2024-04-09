@@ -183,7 +183,8 @@ impl ProjectCatalog {
                 None
             })
             .collect();
-        projects.sort_by(|a, b| a.metadata.start.cmp(&b.metadata.start));
+        // sorting by date newest->oldest
+        projects.sort_by(|a, b| b.metadata.start.cmp(&a.metadata.start));
 
         // validating slug uniqueness
         let mut slugs: Vec<String> = projects.iter().map(|p| p.metadata.slug.clone()).collect();

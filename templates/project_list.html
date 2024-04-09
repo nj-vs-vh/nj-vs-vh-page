@@ -8,15 +8,20 @@
     <link rel="icon" href="/static/favicon.ico" />
   </head>
   <body>
-    <header>
-      <a href="/">home</a> /
-    </header>
+    <header><a href="/">home</a> /</header>
     <h1>projects</h1>
-    <!-- <h1 style="margin-bottom: 0.3em">projects</h1> -->
+    <p>
+      "project" is anything i worked on and consider worth describing. i just
+      like to keep a catalog of stuff i did for reference and perhaps to show
+      off a bit.
+    </p>
+    <p>order is newest -> oldest</p>
     <ul>
       {% for project_href in project_hrefs %}
       <li>
-        <a href="projects/{{ project_href.slug }}">{{ project_href.title }} ({{project_href.start}})</a>
+        <a href="projects/{{ project_href.slug }}"
+          >{{ project_href.title }} ({{project_href.start}})</a
+        >
       </li>
       {% endfor %}
     </ul>
