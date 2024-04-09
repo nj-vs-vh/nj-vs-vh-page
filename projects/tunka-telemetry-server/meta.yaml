@@ -1,0 +1,7 @@
+title: SIT telemetry tool
+start:
+  year: 2020
+  month: 10
+slug: tunka-sit
+github: https://github.com/nj-vs-vh/tunka-telemetry-server
+math: true
