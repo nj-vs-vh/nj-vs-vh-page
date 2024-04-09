@@ -1,0 +1,9 @@
+title: activation scripts vscode extension
+start:
+  year: 2022
+  month: 1
+slug: activation-scripts-vscode
+github: https://github.com/nj-vs-vh/vscode-activation-script
+links:
+  - name: vscode marketplace
+    url: https://marketplace.visualstudio.com/items?itemName=nj-vs-vh.activation-script
