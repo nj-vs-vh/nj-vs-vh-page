@@ -2,14 +2,14 @@ what makes a sound [consonant or dissonant](https://en.wikipedia.org/wiki/Conson
 one simple heuristic may be a "spectral complexity", i.e. the amount of spectral information
 in the sound. the higher the complexity, the more dissonant a sound sounds to a human ear,
 because the brain needs more "processing power" to make sense of this signal. of course,
-this is a simplistic view of psychoacoustics, but it's easily operationalizable.
+this is a simplistic view of psychoacoustics, but it's easy to operationalize.
 consider a chord --- a combination of several voices, each characterized simply by
 a frequency $\{ f_i \}$. for each voice in the chord, one can build a harmonic series
-$k f_i \quad \forall k \in [1, N]$. the chord's spectrum is simply a sum of individual voices'
-spectra. to simplify, we can ignore spectral lines' relative amplitudes and just consider them
+$k f_i \quad \forall k \in [1, N]$. the chord's spectrum is a sum of individual voices'
+spectra. for simplicity we can ignore spectral lines' relative amplitudes and just consider them
 either "on" or "off". by merging the harmonic series of the voices and removing duplicates
 (with some tolerance, since in the [equal temperament](https://en.wikipedia.org/wiki/Equal_temperament)
-no two harmonics frequencies will be equal), one can estimate the "spectral complexity" of a
+no two frequencies will be equal), one can estimate the "spectral complexity" of a
 given chord as the number of distinct spectral lines in it's combined harmonic series.
 
 once we have a way to quantify the chord's consonant-dissonant quality, we can generate
