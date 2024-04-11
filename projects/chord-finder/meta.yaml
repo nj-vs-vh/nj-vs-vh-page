@@ -5,6 +5,6 @@ start:
 slug: chord-finder
 github: https://github.com/nj-vs-vh/chord-finder
 links:
-  - name: play
+  - name: chord-finder
     url: https://chord-finder.nj-vs-vh.name/
 math: true
