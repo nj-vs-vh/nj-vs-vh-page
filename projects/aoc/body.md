@@ -24,16 +24,15 @@ the terminal. also, all frames are cached, so the user can go back and forth bet
 is very handy when catching some rare edge cases.
 
 i also tried adding gif rendering backend, which kind of worked but it turns out that gif is
-a really slow and space-inefficient format. what lack of inter-frame compression does to a mf. 
+a really slow and space-inefficient format, so it's not really usable.
 
-i didn't complete this year because i got stuck on day 16. maybe someday i will revisit it...
+i didn't complete this year because i got stuck on day 16. maybe someday i will revisit it.
 
 ## 2023
 i decided to put rust aside and focus on my main language --- python. specifically, i wanted to
-write clean code and make my solutions as efficient as possible. python is not
-~the sharpest tool in the shed~ the fastest language, so the total runtime
-[is still around 20 seconds](https://github.com/nj-vs-vh/advent-of-code-2023?tab=readme-ov-file#results).
-anyway, i had a lot of fun optimizing python code (to the point of removing `Enum`s because an
-overhead of their constructor was the leading factor).
+write clean code and make my solutions as efficient as possible. python is not the fastest language,
+so the total runtime [is still around 20 seconds](https://github.com/nj-vs-vh/advent-of-code-2023?tab=readme-ov-file#results).
+anyway, i had a lot of fun optimizing my python code (to the point of removing `Enum`s because an
+overhead of their constructor was the leading runtime component).
 
 overall, i'm pretty happy with how this year turned out!

@@ -1,0 +1,10 @@
+title: chord finder, a minimalist computer music generator
+start:
+  year: 2024
+  month: 4
+slug: chord-finder
+github: https://github.com/nj-vs-vh/chord-finder
+links:
+  - name: play
+    url: https://chord-finder.nj-vs-vh.name/
+math: true
