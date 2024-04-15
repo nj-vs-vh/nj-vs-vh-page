@@ -1,3 +1,5 @@
+**taken offline for compute resource reasons**
+
 [semantle](https://semantle.com/) (**semant**ic word**le**) is a wonderful
 [wordle](https://www.nytimes.com/games/wordle/index.html)-inspired word-guessing
 game. it utilizes [word embeddings](https://en.wikipedia.org/wiki/Word_embedding)
