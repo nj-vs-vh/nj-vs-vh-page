@@ -7,3 +7,6 @@ github: https://github.com/nj-vs-vh/nj-vs-vh-page
 code_languages:
   - python
 math: true
+tags:
+  - code:rust
+  - platform:web

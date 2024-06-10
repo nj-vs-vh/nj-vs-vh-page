@@ -9,3 +9,7 @@ links:
     url: https://pypi.org/project/slow-learner
 code_languages:
   - python
+tags:
+  - code:python
+  - platform:library
+  

@@ -1,11 +1,12 @@
 use askama::Template;
+use askama_axum::IntoResponse;
 use axum::{
     extract::{Path, State},
     http::{header, StatusCode},
+    response::Response,
     routing::get,
     Router,
 };
-use date::Date;
 use project::Project;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
@@ -15,8 +16,11 @@ use tower_http::{services::ServeDir, set_header::SetResponseHeader};
 use tracing::Level;
 use tracing_subscriber::FmtSubscriber;
 
+use templates::ProjectHyperlink;
+
 mod date;
 mod project;
+mod templates;
 
 #[derive(Clone)]
 struct AppState {
@@ -96,76 +100,58 @@ async fn main() {
 }
 
 // index
-
-struct ProjectHref {
-    title: String,
-    slug: String,
-    start: Date,
-}
-
-impl ProjectHref {
-    fn from_project(p: &Project) -> ProjectHref {
-        ProjectHref {
-            title: p.metadata.title.to_owned(),
-            slug: p.metadata.slug.to_owned(),
-            start: p.metadata.start.to_owned(),
-        }
-    }
-}
-
 #[derive(Template)]
 #[template(path = "index.html")]
-struct Index {
-    project_hrefs: Vec<ProjectHref>,
+struct Index<'a> {
+    selected_project_hyperlinks: Vec<ProjectHyperlink<'a>>,
 }
 
-async fn index(State(state): State<AppState>) -> Index {
+async fn index<'a>(State(state): State<AppState>) -> Response {
     let mut rng = thread_rng();
     Index {
-        project_hrefs: state
+        selected_project_hyperlinks: state
             .project_catalog
             .projects
             .choose_multiple(&mut rng, 5)
-            .map(ProjectHref::from_project)
+            .map(|p| ProjectHyperlink { p })
             .collect(),
     }
+    .into_response()
 }
 
 #[derive(Template)]
 #[template(path = "project_list.html")]
-struct ProjectList {
-    project_hrefs: Vec<ProjectHref>,
+struct ProjectList<'a> {
+    project_hyperlinks: Vec<ProjectHyperlink<'a>>,
 }
 
-async fn project_list(State(state): State<AppState>) -> ProjectList {
+async fn project_list<'a>(State(state): State<AppState>) -> Response {
     ProjectList {
-        project_hrefs: state
+        project_hyperlinks: state
             .project_catalog
             .projects
             .iter()
-            .map(ProjectHref::from_project)
+            .map(|p| ProjectHyperlink { p })
             .collect(),
     }
+    .into_response()
 }
 
 // project page
 
 #[derive(Template)]
 #[template(path = "project.html")]
-struct ProjectPage {
-    project: Project,
+struct ProjectPage<'a> {
+    project: &'a Project,
 }
 
-async fn project_page(
+async fn project_page<'a>(
     State(state): State<AppState>,
     Path(slug): Path<String>,
-) -> Result<ProjectPage, StatusCode> {
+) -> Result<Response, StatusCode> {
     let project_match = state.project_catalog.find(&slug);
     if let Some(project) = project_match {
-        Ok(ProjectPage {
-            // this is stupid!!! clone less!!!
-            project: project.clone(),
-        })
+        Ok(ProjectPage { project }.into_response())
     } else {
         Err(StatusCode::NOT_FOUND)
     }

@@ -7,3 +7,8 @@ github: https://github.com/nj-vs-vh/ru-semantle
 links:
   - name: play
     url: https://ru-semantle.nj-vs-vh.name/
+tags:
+  - code:python
+  - code:svelte
+  - platform:web
+

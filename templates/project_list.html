@@ -17,12 +17,8 @@
     </p>
     <p>newest -> oldest</p>
     <ul>
-      {% for project_href in project_hrefs %}
-      <li>
-        <a href="projects/{{ project_href.slug }}"
-          >{{ project_href.title }} ({{project_href.start}})</a
-        >
-      </li>
+      {% for ph in project_hyperlinks %}
+        <li>{{ ph|safe }}</li>
       {% endfor %}
     </ul>
     {% include "license_footer.html" %}

@@ -46,10 +46,8 @@
     </ul>
     <h3>my projects</h3>
     <ul>
-      {% for project_href in project_hrefs %}
-      <li>
-        <a href="projects/{{ project_href.slug }}">{{ project_href.title }}</a>
-      </li>
+      {% for ph in selected_project_hyperlinks %}
+        <li>{{ ph|safe }}</li>
       {% endfor %}
       <li class="see-more">
         <a href="projects">...see full list</a>

@@ -4,3 +4,9 @@ start:
   month: 10
 slug: pyindigo
 github: https://github.com/nj-vs-vh/pyindigo
+tags:
+  - code:python
+  - code:c
+  - platform:library
+  - topic:science
+

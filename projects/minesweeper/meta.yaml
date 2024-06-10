@@ -5,3 +5,6 @@ start:
 slug: tas-minesweeper
 github: https://github.com/nj-vs-vh/ascii-minesweeper
 math: true
+tags:
+  - code:python
+  - platform:terminal

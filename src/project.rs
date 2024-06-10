@@ -17,7 +17,7 @@ pub struct Tag {
 }
 
 #[derive(Deserialize, Debug, Clone)]
-pub struct Metadata {
+pub struct ProjectMetadata {
     pub title: String,
     pub slug: String,
 
@@ -47,7 +47,7 @@ fn default_math() -> bool {
 
 #[derive(Clone)]
 pub struct Project {
-    pub metadata: Metadata,
+    pub metadata: ProjectMetadata,
     body_md: String,
     pub body_html: String,
 }
@@ -70,8 +70,9 @@ impl Project {
         }
 
         // loading metadata
-        let mut metadata: Metadata = serde_yaml::from_reader(File::open(dir.join("meta.yaml"))?)
-            .map_err(|e| io::Error::other(e.to_string()))?;
+        let mut metadata: ProjectMetadata =
+            serde_yaml::from_reader(File::open(dir.join("meta.yaml"))?)
+                .map_err(|e| io::Error::other(e.to_string()))?;
         if let Some(ref github_link_url) = metadata.github {
             metadata.links.insert(
                 0,
@@ -183,6 +184,7 @@ impl ProjectCatalog {
                 None
             })
             .collect();
+
         // sorting by date newest->oldest
         projects.sort_by(|a, b| b.metadata.start.cmp(&a.metadata.start));
 

@@ -9,3 +9,6 @@ links:
     url: https://github.com/nj-vs-vh/advent-of-code-2022
   - name: 2023
     url: https://github.com/nj-vs-vh/advent-of-code-2023
+tags:
+  - code:python
+  - code:rust

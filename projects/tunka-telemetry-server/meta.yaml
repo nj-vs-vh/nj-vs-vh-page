@@ -5,3 +5,8 @@ start:
 slug: tunka-sit
 github: https://github.com/nj-vs-vh/tunka-telemetry-server
 math: true
+tags:
+  - code:python
+  - code:react
+  - platform:web
+  - topic:science

@@ -36,14 +36,7 @@
     <h1 style="margin-bottom: 0.3em">{{ project.metadata.title }}</h1>
     <div class="stack">
       <div>{{ project.metadata.start }}</div>
-      {% if project.metadata.tags.len() > 0 %}
-      <div>
-        <strong>tags:</strong>
-        {% for tag in project.metadata.tags %}
-        <a href="/tags?q={{tag.name}}" target="_blank">{{ tag.name }}</a>
-        {% endfor %}
-      </div>
-      {% endif %}
+      
       <!--  -->
       {% if project.metadata.links.len() > 0 %}
       <div class="group">
@@ -55,6 +48,13 @@
       {% endif %}
     </div>
     <div class="project-body">{{ project.body_html|escape("none") }}</div>
+    {% if project.metadata.tags.len() > 0 %}
+      <div class="group" style="font-size: smaller;">
+        {% for tag in project.metadata.tags %}
+          <a href="/tags?q={{tag.name}}" title="{{tag.prefix}}:{{tag.name}}" target="_blank">#{{ tag.name }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
     {% include "license_footer.html" %}
   </body>
 </html>
@@ -72,7 +72,7 @@
   .group {
     display: flex;
     flex-direction: row;
-    gap: 2rem;
+    gap: 1.5rem;
     align-items: baseline;
   }
 </style>

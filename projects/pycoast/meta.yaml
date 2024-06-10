@@ -4,3 +4,7 @@ start:
   month: 1
 slug: pycoast
 github: https://github.com/nj-vs-vh/pyCOAST
+tags:
+  - code:python
+  - platform:library
+  - topic:science

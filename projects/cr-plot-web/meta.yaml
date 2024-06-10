@@ -9,3 +9,7 @@ links:
     url: https://cosmic-rays-spectrum.nj-vs-vh.name/
   - name: upstream plot repo
     url: https://github.com/carmeloevoli/The_CR_Spectrum
+tags:
+  - code:js
+  - topic:science
+  - platform:web

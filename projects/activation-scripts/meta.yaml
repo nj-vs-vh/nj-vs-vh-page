@@ -7,3 +7,6 @@ github: https://github.com/nj-vs-vh/vscode-activation-script
 links:
   - name: vscode marketplace
     url: https://marketplace.visualstudio.com/items?itemName=nj-vs-vh.activation-script
+tags:
+  - code:js
+  - platform:vscode

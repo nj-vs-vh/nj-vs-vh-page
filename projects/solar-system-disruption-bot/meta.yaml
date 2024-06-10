@@ -7,3 +7,7 @@ github: https://github.com/nj-vs-vh/solar-system-disruption-bot
 links:
   - name: telegram channel
     url: https://t.me/solar_system_disruption
+tags:
+  - code:python
+  - topic:visualization
+  

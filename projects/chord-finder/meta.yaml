@@ -8,3 +8,7 @@ links:
   - name: chord-finder
     url: https://chord-finder.nj-vs-vh.name/
 math: true
+tags:
+  - code:js
+  - topic:sound
+  - platform:web
