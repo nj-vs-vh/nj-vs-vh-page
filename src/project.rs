@@ -5,15 +5,21 @@ use crate::date::Date;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
-pub struct ProjectRelatedLink {
+pub struct ProjectLink {
     pub name: String,
     pub url: String,
 }
 
 #[derive(Deserialize, Debug, Clone)]
-pub struct Tag {
-    pub prefix: String,
+pub struct ProjectTag {
+    pub category: String,
     pub name: String,
+}
+
+impl std::fmt::Display for ProjectTag {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_fmt(format_args!("{}:{}", self.category, self.name))
+    }
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -22,7 +28,7 @@ pub struct ProjectMetadata {
     pub slug: String,
 
     #[serde(default = "Vec::new")]
-    pub links: Vec<ProjectRelatedLink>,
+    pub links: Vec<ProjectLink>,
 
     pub github: Option<String>,
 
@@ -38,7 +44,7 @@ pub struct ProjectMetadata {
     #[serde(default = "Vec::new", alias = "tags")]
     tags_raw: Vec<String>,
     #[serde(default = "Vec::new")]
-    pub tags: Vec<Tag>,
+    pub tags: Vec<ProjectTag>,
 }
 
 fn default_math() -> bool {
@@ -76,7 +82,7 @@ impl Project {
         if let Some(ref github_link_url) = metadata.github {
             metadata.links.insert(
                 0,
-                ProjectRelatedLink {
+                ProjectLink {
                     name: "github".to_owned(),
                     url: github_link_url.clone(),
                 },
@@ -84,13 +90,13 @@ impl Project {
         }
         // post-parsing tags
         for tag_raw in metadata.tags_raw.iter() {
-            if let Some((prefix, body)) = tag_raw.split_once(":") {
-                metadata.tags.push(Tag {
-                    prefix: prefix.to_owned(),
+            if let Some((category, body)) = tag_raw.split_once(":") {
+                metadata.tags.push(ProjectTag {
+                    category: category.to_owned(),
                     name: body.to_owned(),
                 })
             } else {
-                return Err(io::Error::other(format!("invalid tag: {}", tag_raw)));
+                return Err(io::Error::other(format!("invalid tag: {:?}", tag_raw)));
             }
         }
 

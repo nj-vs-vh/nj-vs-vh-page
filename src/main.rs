@@ -29,6 +29,7 @@ struct AppState {
 
 #[tokio::main]
 async fn main() {
+    let is_dev = env::var("DEV").map(|v| v.len() > 0).unwrap_or(false);
     let is_debug = env::var("DEBUG").is_ok();
 
     let log_level = if is_debug { Level::DEBUG } else { Level::INFO };
@@ -64,6 +65,7 @@ async fn main() {
     let catalog = catalog_res.unwrap();
     tracing::info!("Loaded project catalog: {}", &catalog);
 
+    let cache_control = if is_dev { "max-age=300" } else { "no-cache" };
     let app = Router::new()
         .route("/", get(index))
         .route("/projects", get(project_list))
@@ -74,7 +76,7 @@ async fn main() {
             SetResponseHeader::if_not_present(
                 ServeDir::new(static_dir),
                 header::CACHE_CONTROL,
-                header::HeaderValue::from_static("max-age=300"),
+                header::HeaderValue::from_static(&cache_control),
             ),
         )
         .nest_service(
@@ -82,7 +84,7 @@ async fn main() {
             SetResponseHeader::if_not_present(
                 ServeDir::new(&project_media_dir),
                 header::CACHE_CONTROL,
-                header::HeaderValue::from_static("max-age=300"),
+                header::HeaderValue::from_static(&cache_control),
             ),
         )
         .layer(TraceLayer::new_for_http())

@@ -1,3 +1,7 @@
+:root {
+  --secondary-blue: rgb(128, 128, 255);
+}
+
 body {
   margin: 2rem auto;
   width: min(800px, 95vw);

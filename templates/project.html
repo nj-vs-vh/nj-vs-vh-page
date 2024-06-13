@@ -51,7 +51,7 @@
     {% if project.metadata.tags.len() > 0 %}
       <div class="group" style="font-size: smaller;">
         {% for tag in project.metadata.tags %}
-          <a href="/tags?q={{tag.name}}" title="{{tag.prefix}}:{{tag.name}}" target="_blank">#{{ tag.name }}</a>
+          <a href="/tags?q={{tag}}" title="{{tag}}" target="_blank">{{ tag.name }}</a>
         {% endfor %}
       </div>
     {% endif %}
