@@ -8,14 +8,20 @@
     <link rel="icon" href="/static/favicon.ico" />
   </head>
   <body>
-    <header><a href="/">home</a> /</header>
-    <h1>projects</h1>
-    <p>
-      "project" is anything i worked on and consider worth describing. i just
-      like to keep a catalog of stuff i did for reference and perhaps to show
-      off a bit.
-    </p>
-    <p>newest -> oldest</p>
+    {% match tag_filter %}
+      {% when Some with (tag_filter) %}
+        <header><a href="/">home</a> / <a href="/projects">projects</a> /</header>
+        <h1>{{tag_filter}}</h1>
+      {% when None %}
+        <header><a href="/">home</a> /</header>
+        <h1>projects</h1>
+        <p>
+          "project" is anything i worked on and consider worth describing. i just
+          like to keep a catalog of stuff i did for reference and perhaps to show
+          off a bit.
+        </p>
+        <p>newest -> oldest</p>
+    {% endmatch %}
     <ul>
       {% for ph in project_hyperlinks %}
         <li>{{ ph|safe }}</li>

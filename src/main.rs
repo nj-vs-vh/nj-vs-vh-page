@@ -1,16 +1,16 @@
 use askama::Template;
 use askama_axum::IntoResponse;
 use axum::{
-    extract::{Path, State},
+    extract::{Path, Query, State},
     http::{header, StatusCode},
     response::Response,
     routing::get,
     Router,
 };
-use project::Project;
+use project::{Project, ProjectTag};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
-use std::{env, path};
+use std::{collections::HashMap, env, path};
 use tower_http::trace::TraceLayer;
 use tower_http::{services::ServeDir, set_header::SetResponseHeader};
 use tracing::Level;
@@ -125,18 +125,34 @@ async fn index<'a>(State(state): State<AppState>) -> Response {
 #[template(path = "project_list.html")]
 struct ProjectList<'a> {
     project_hyperlinks: Vec<ProjectHyperlink<'a>>,
+    tag_filter: Option<ProjectTag>,
 }
 
-async fn project_list<'a>(State(state): State<AppState>) -> Response {
-    ProjectList {
+async fn project_list<'a>(
+    State(state): State<AppState>,
+    Query(query): Query<HashMap<String, String>>,
+) -> Result<Response, StatusCode> {
+    let tag_filter = match query.get("tag") {
+        None => None,
+        Some(t) => Some(ProjectTag::parse(t).map_err(|_| StatusCode::BAD_REQUEST)?),
+    };
+    Ok(ProjectList {
         project_hyperlinks: state
             .project_catalog
             .projects
             .iter()
+            .filter(|p| {
+                if let Some(tag_filter) = &tag_filter {
+                    p.metadata.tags.contains(tag_filter)
+                } else {
+                    true
+                }
+            })
             .map(|p| ProjectHyperlink { p })
             .collect(),
+        tag_filter,
     }
-    .into_response()
+    .into_response())
 }
 
 // project page
@@ -158,3 +174,22 @@ async fn project_page<'a>(
         Err(StatusCode::NOT_FOUND)
     }
 }
+
+// #[derive(Template)]
+// #[template(path = "tag_search.html")]
+// struct TagSearchPage<'a> {
+//     query_tag: &'a String,
+// }
+
+// async fn tag_search<'a>(
+// ) -> Result<Response, StatusCode> {
+//     let query_tag = query.get("q");
+//     if let Some(query_tag) = query_tag {
+//         Ok(TagSearchPage {
+//             query_tag: query_tag,
+//         }
+//         .into_response())
+//     } else {
+//         Err(StatusCode::NOT_FOUND)
+//     }
+// }

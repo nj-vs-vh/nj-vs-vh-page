@@ -29,14 +29,11 @@
   </script>
   {% endif %}
   <body>
-    <header>
-      <a href="/">home</a> /
-      <a href="/projects">projects</a> /
-    </header>
+    <header><a href="/">home</a> / <a href="/projects">projects</a> /</header>
     <h1 style="margin-bottom: 0.3em">{{ project.metadata.title }}</h1>
     <div class="stack">
       <div>{{ project.metadata.start }}</div>
-      
+
       <!--  -->
       {% if project.metadata.links.len() > 0 %}
       <div class="group">
@@ -49,13 +46,14 @@
     </div>
     <div class="project-body">{{ project.body_html|escape("none") }}</div>
     {% if project.metadata.tags.len() > 0 %}
-      <div class="group" style="font-size: smaller;">
-        {% for tag in project.metadata.tags %}
-          <a href="/tags?q={{tag}}" title="{{tag}}" target="_blank">{{ tag.name }}</a>
-        {% endfor %}
-      </div>
-    {% endif %}
-    {% include "license_footer.html" %}
+    <div class="group" style="font-size: smaller">
+      {% for tag in project.metadata.tags %}
+      <a href="/projects?tag={{tag}}" title="list projects tagged with {{tag}}"
+        >{{ tag.name }}</a
+      >
+      {% endfor %}
+    </div>
+    {% endif %} {% include "license_footer.html" %}
   </body>
 </html>
 <style>

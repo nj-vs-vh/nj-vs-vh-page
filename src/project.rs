@@ -10,7 +10,7 @@ pub struct ProjectLink {
     pub url: String,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct ProjectTag {
     pub category: String,
     pub name: String,
@@ -19,6 +19,19 @@ pub struct ProjectTag {
 impl std::fmt::Display for ProjectTag {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_fmt(format_args!("{}:{}", self.category, self.name))
+    }
+}
+
+impl ProjectTag {
+    pub fn parse(s: &str) -> io::Result<ProjectTag> {
+        if let Some((category, body)) = s.split_once(":") {
+            Ok(ProjectTag {
+                category: category.to_owned(),
+                name: body.to_owned(),
+            })
+        } else {
+            Err(io::Error::other(format!("invalid tag: {:?}", s)))
+        }
     }
 }
 
@@ -90,14 +103,7 @@ impl Project {
         }
         // post-parsing tags
         for tag_raw in metadata.tags_raw.iter() {
-            if let Some((category, body)) = tag_raw.split_once(":") {
-                metadata.tags.push(ProjectTag {
-                    category: category.to_owned(),
-                    name: body.to_owned(),
-                })
-            } else {
-                return Err(io::Error::other(format!("invalid tag: {:?}", tag_raw)));
-            }
+            metadata.tags.push(ProjectTag::parse(&tag_raw)?);
         }
 
         // loading project description body

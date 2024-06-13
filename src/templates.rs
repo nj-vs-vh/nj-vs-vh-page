@@ -11,7 +11,7 @@ use askama::Template;
                 {% for tag in p.metadata.tags %}
                     <a
                         style=\"color: var(--secondary-blue)\"
-                        href=\"/tags?q={{tag}}\" title=\"{{tag}}\" target=\"_blank\"
+                        href=\"/projects?tag={{tag}}\" title=\"{{tag}}\"
                     >{{ tag.name }}</a>
                 {% endfor %}
             </span>
