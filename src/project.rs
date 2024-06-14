@@ -1,4 +1,6 @@
+use itertools::Itertools;
 use regex::Regex;
+use std::cmp::Reverse;
 use std::{fs::File, io, path::Path};
 
 use crate::date::Date;
@@ -10,7 +12,7 @@ pub struct ProjectLink {
     pub url: String,
 }
 
-#[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ProjectTag {
     pub category: String,
     pub name: String,
@@ -154,16 +156,27 @@ impl Project {
     }
 }
 
+pub type TagGroups = Vec<(String, Vec<ProjectTag>)>;
+
 #[derive(Debug, Clone)]
 pub struct ProjectCatalog {
     pub projects: Vec<Project>,
+    pub tag_groups: TagGroups,
 }
 
 impl std::fmt::Display for ProjectCatalog {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(&format!(
-            "ProjectCatalog {{ {} items }}",
-            self.projects.len()
+            "ProjectCatalog {{ {} projects, tags: {} }}",
+            self.projects.len(),
+            self.tag_groups
+                .iter()
+                .map(|(category, tags)| format!(
+                    "{}:[{}]",
+                    category,
+                    tags.iter().map(|t| t.name.clone()).join("|")
+                ))
+                .join(", "),
         ))
     }
 }
@@ -208,7 +221,34 @@ impl ProjectCatalog {
             return Err(io::Error::other("Project catalog contains duplicate slugs"));
         }
 
-        Ok(ProjectCatalog { projects })
+        // tag groups
+        let mut tags: Vec<ProjectTag> = projects
+            .iter()
+            .flat_map(|p| p.metadata.tags.clone())
+            .collect();
+        tags.sort_by_key(|t| t.category.clone());
+        let mut tag_groups = tags
+            .into_iter()
+            .chunk_by(|t| t.category.clone())
+            .into_iter()
+            .map(|(key, chunk)| {
+                (
+                    key,
+                    chunk
+                        .counts()
+                        .into_iter()
+                        .sorted_by_key(|(_, freq)| Reverse(*freq))
+                        .map(|(tag, _)| tag)
+                        .collect_vec(),
+                )
+            })
+            .collect_vec();
+        tag_groups.sort_by_key(|(_, group)| Reverse(group.len()));
+
+        Ok(ProjectCatalog {
+            projects,
+            tag_groups,
+        })
     }
 
     pub fn find<'a>(&'a self, slug: &str) -> Option<&'a Project> {

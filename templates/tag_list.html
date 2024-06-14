@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nj-vs-vh | tags</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="icon" href="/static/favicon.ico" />
+  </head>
+  <body>
+    <header><a href="/">home</a> /</header>
+    <h1>tags</h1>
+    {% for (category, tags) in tag_groups %}
+    <h2>{{category}}</h2>
+    {% for tag in tags %}
+    <a href="/projects?tag={{tag}}" title="list projects tagged with {{tag}}"
+      >{{ tag.name }}</a
+    >
+    {% endfor %}
+    <!--  -->
+    {% endfor %}
+    <!--  -->
+    {% include "license_footer.html" %}
+  </body>
+</html>

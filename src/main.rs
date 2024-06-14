@@ -7,7 +7,7 @@ use axum::{
     routing::get,
     Router,
 };
-use project::{Project, ProjectTag};
+use project::{Project, ProjectTag, TagGroups};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::{collections::HashMap, env, path};
@@ -71,6 +71,8 @@ async fn main() {
         .route("/projects", get(project_list))
         .route("/projects/", get(project_list))
         .route("/projects/:slug", get(project_page))
+        .route("/tags/", get(tag_list))
+        .route("/tags", get(tag_list))
         .nest_service(
             "/static",
             SetResponseHeader::if_not_present(
@@ -175,21 +177,15 @@ async fn project_page<'a>(
     }
 }
 
-// #[derive(Template)]
-// #[template(path = "tag_search.html")]
-// struct TagSearchPage<'a> {
-//     query_tag: &'a String,
-// }
+#[derive(Template)]
+#[template(path = "tag_list.html")]
+struct TagSearchPage<'a> {
+    tag_groups: &'a TagGroups,
+}
 
-// async fn tag_search<'a>(
-// ) -> Result<Response, StatusCode> {
-//     let query_tag = query.get("q");
-//     if let Some(query_tag) = query_tag {
-//         Ok(TagSearchPage {
-//             query_tag: query_tag,
-//         }
-//         .into_response())
-//     } else {
-//         Err(StatusCode::NOT_FOUND)
-//     }
-// }
+async fn tag_list(State(state): State<AppState>) -> Result<Response, StatusCode> {
+    Ok(TagSearchPage {
+        tag_groups: &state.project_catalog.tag_groups,
+    }
+    .into_response())
+}
