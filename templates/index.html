@@ -25,9 +25,11 @@
     <h3>how to find me</h3>
     <ul>
       <li>
+        i track code on
         <a href="https://github.com/nj-vs-vh" target="_blank">github</a>
       </li>
       <li>
+        details of my commercial and academic experience are on
         <a
           href="https://www.linkedin.com/in/igor-vaiman-110ba21a9/"
           target="_blank"
@@ -35,22 +37,25 @@
         >
       </li>
       <li>
+        some of my sound-related work is available on
         <a href="https://soundcloud.com/nj_vs_valhalla" target="_blank"
           >soundcloud</a
         >
       </li>
       <li>
-        <a href="mailto:gosha.vaiman@gmail.com" target="_blank">e-main</a> to
-        gosha.vaiman@gmail.com
+        write me an
+        <a href="mailto:gosha.vaiman@gmail.com" target="_blank">emain to
+        gosha.vaiman@gmail.com</a>
       </li>
     </ul>
     <h3>my projects</h3>
     <ul>
       {% for ph in selected_project_hyperlinks %}
-        <li>{{ ph|safe }}</li>
+      <li>{{ ph|safe }}</li>
       {% endfor %}
       <li class="see-more">
-        <a href="projects">...see full list</a>
+        <a href="/projects">...see all projects</a> or
+        <a href="/tags">browse tags</a>
       </li>
     </ul>
     {% include "license_footer.html" %}

@@ -1,0 +1,13 @@
+title: unnamed VST looper plugin
+start:
+  year: 2019
+  month: 8
+slug: unnamed-vst-looper
+github: https://github.com/nj-vs-vh/unnamed-vst-looper
+links:
+  - name: download
+    url: https://github.com/nj-vs-vh/unnamed-vst-looper/raw/main/bin/MyLooper_v3.dll
+tags:
+  - code:matlab
+  - platform:vst
+  - topic:sound
