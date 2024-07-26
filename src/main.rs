@@ -73,6 +73,7 @@ async fn main() {
         .route("/projects/:slug", get(project_page))
         .route("/tags/", get(tag_list))
         .route("/tags", get(tag_list))
+        .route("/music", get(|| async { MusicPage {} }))
         .nest_service(
             "/static",
             SetResponseHeader::if_not_present(
@@ -189,3 +190,7 @@ async fn tag_list(State(state): State<AppState>) -> Result<Response, StatusCode>
     }
     .into_response())
 }
+
+#[derive(Template)]
+#[template(path = "music.html")]
+struct MusicPage {}

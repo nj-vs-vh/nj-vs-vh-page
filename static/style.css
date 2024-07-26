@@ -4,7 +4,7 @@
 
 body {
   margin: 2rem auto;
-  width: min(800px, 95vw);
+  width: min(700px, 95vw);
   font-family: 'Courier New', Courier, monospace;
 }
 
