@@ -15,16 +15,28 @@
     <header><a href="/">home</a> /</header>
     <h1>music</h1>
     <p>
+      {% if embeds %}
+      <!--  -->
+      <a href="?embeds=false">view without embeds</a>
+      <!--  -->
+      {% else %}
+      <a href="?embeds=true">view with embeds</a>
+      <!--  -->
+      {% endif %}
+    </p>
+    <p>
       i spent most of my adult life making music in some form and engaging with
       various unerground / punk / DIY communities and scenes. here's some of the
       stuff i took part in. most of the projects were done in russia and in
       russian.
     </p>
+
     <section>
       <h2>
         Позоры
         <div role="doc-subtitle">
-          2019 - pres. / <a href="https://pozori.bandcamp.com/">bandcamp</a> /
+          2019 - pres. /
+          <a target="_blank" href="https://pozori.bandcamp.com/">bandcamp</a> /
           drums, bass, composer, producer
         </div>
       </h2>
@@ -34,6 +46,8 @@
         in the future.
       </p>
 
+      {% if embeds %}
+      <!--  -->
       <iframe
         style="border: 0; width: 100%; height: 42px"
         src="https://bandcamp.com/EmbeddedPlayer/album=4158032550/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/"
@@ -42,12 +56,19 @@
           >Женщина by Позоры</a
         ></iframe
       >
+      {% else %}
+      <a target="_blank" href="https://pozori.bandcamp.com/album/--4"
+        >Женщина by Позоры</a
+      >
+      {% endif %}
 
       <p>
         one of my favorite works, an album done in one night in the wake of
         russian invasion of Ukraine as a desperate attempt to do
         <em>something</em>, which wasn't much
       </p>
+      {% if embeds %}
+      <!--  -->
       <iframe
         style="border: 0; width: 100%; height: 42px"
         src="https://bandcamp.com/EmbeddedPlayer/album=1215265108/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/"
@@ -56,10 +77,17 @@
           >АНТИВОЕННОЕ ВЫСКАЗЫВАНИЕ by Позоры</a
         ></iframe
       >
+      {% else %}
+      <a taget="_blank" href="https://pozori.bandcamp.com/album/--5"
+        >АНТИВОЕННОЕ ВЫСКАЗЫВАНИЕ by Позоры</a
+      >
+      {% endif %}
 
       <details>
         <summary>some live videos (and even a documentary)</summary>
         <div>
+          {% if embeds %}
+          <!--  -->
           <iframe
             width="560"
             height="315"
@@ -100,15 +128,38 @@
             referrerpolicy="strict-origin-when-cross-origin"
             allowfullscreen
           ></iframe>
+          {% else %}
+          <a
+            target="_blank"
+            href="https://www.youtube.com/embed/-J6RHHe42yQ?si=RW2Ct_I5kkzrqtY2"
+            >youtube</a
+          >
+          <a
+            target="_blank"
+            href="https://www.youtube.com/embed/-y4AWMutlGk?si=C24z7i-Oxvssux-b"
+            >youtube</a
+          >
+          <a
+            target="_blank"
+            href="https://www.youtube.com/embed/ec068PDQyoM?si=BbT0RyuloPHtyrbf"
+            >youtube</a
+          >
+          <a
+            target="_blank"
+            href="https://www.youtube.com/embed/BFo_Rhh5TUE?si=ZFicqhuvyUAsyaRk"
+            >youtube</a
+          >
+          {% endif %}
         </div>
       </details>
     </section>
+
     <section>
       <h2>
         корабельные сосны
         <div role="doc-subtitle">
           2016 - pres. /
-          <a href="https://pinestobuildships.bandcamp.com">bandcamp</a> /
+          <a target="_blank" href="https://pinestobuildships.bandcamp.com">bandcamp</a> /
           one-man-band, recording, mixing & mastering
         </div>
       </h2>
@@ -118,6 +169,8 @@
         trouble sharing this project this with people because of how intimate
         and consequently cringy it gets at times.
       </p>
+      {% if embeds %}
+      <!--  -->
       <iframe
         style="border: 0; width: 100%; height: 42px"
         src="https://bandcamp.com/EmbeddedPlayer/album=2822025260/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/"
@@ -142,7 +195,21 @@
           >Это вы by корабельные сосны</a
         ></iframe
       >
+      {% else %}
+
+      <a target="_blank" href="https://pinestobuildships.bandcamp.com/album/--6"
+        >пролог by корабельные сосны</a
+      >
+      <a target="_blank" href="https://pinestobuildships.bandcamp.com/album/--4"
+        >страх никогда не вернуться домой by корабельные сосны</a
+      >
+      <a target="_blank" href="https://pinestobuildships.bandcamp.com/album/--2"
+        >Это вы by корабельные сосны</a
+      >
+      {% endif %}
       <p>noise experiments etc</p>
+      {% if embeds %}
+      <!--  -->
       <iframe
         style="border: 0; width: 100%; height: 42px"
         src="https://bandcamp.com/EmbeddedPlayer/album=3176640482/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/"
@@ -151,10 +218,17 @@
           >страх никогда не выйти из дома by корабельные сосны</a
         ></iframe
       >
+      {% else %}
+      <a target="_blank" href="https://pinestobuildships.bandcamp.com/album/--5"
+        >страх никогда не выйти из дома by корабельные сосны</a
+      >
+      {% endif %}
       <p>
         for a brief moment around 2018-2019 i tried playing live shows, which
         are best summarized by this live
       </p>
+      {% if embeds %}
+      <!--  -->
       <iframe
         width="560"
         height="315"
@@ -165,8 +239,17 @@
         referrerpolicy="strict-origin-when-cross-origin"
         allowfullscreen
       ></iframe>
+      {% else %}
+      <a
+        target="_blank"
+        href="https://www.youtube.com/embed/TdGRRwJhhxM?si=XLJifrci87djKfLR"
+        >youtube</a
+      >
+      {% endif %}
       <details>
         <summary>and some more</summary>
+        {% if embeds %}
+        <!--  -->
         <iframe
           width="560"
           height="315"
@@ -177,14 +260,22 @@
           referrerpolicy="strict-origin-when-cross-origin"
           allowfullscreen
         ></iframe>
+        {% else %}
+        <a
+          target="_blank"
+          href="https://www.youtube.com/embed/P2ekiRhqpv0?si=hauX5KTYYgMssqYo"
+          >youtube</a
+        >
+        {% endif %}
       </details>
     </section>
+
     <section>
       <h2>
         сукин сын
         <div role="doc-subtitle">
           2019 - 2023 /
-          <a href="https://huigniluye265.bandcamp.com/">bandcamp</a> / drums,
+          <a target="_blank" href="https://huigniluye265.bandcamp.com/">bandcamp</a> / drums,
           recording & mixing (in part)
         </div>
       </h2>
@@ -196,6 +287,8 @@
         worked as a "close mic" for drums; mixing & mastering was completed on
         the following day – the total production cycle was below 20 hours.
       </p>
+      {% if embeds %}
+      <!--  -->
       <iframe
         style="border: 0; width: 100%; height: 42px"
         src="https://bandcamp.com/EmbeddedPlayer/album=3266371413/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/"
@@ -204,10 +297,17 @@
           >ужасное поведение by сукин сын</a
         ></iframe
       >
+      {% else %}
+      <a target="_blank" href="https://huigniluye265.bandcamp.com/album/--3"
+        >ужасное поведение by сукин сын</a
+      >
+      {% endif %}
       <p>
         also, an accidental piece of ambient i glued in post-production from 20
         minutes of raw guitar noise
       </p>
+      {% if embeds %}
+      <!--  -->
       <iframe
         style="border: 0; width: 100%; height: 42px"
         src="https://bandcamp.com/EmbeddedPlayer/album=980220754/size=small/bgcol=ffffff/linkcol=0687f5/track=930618411/transparent=true/"
@@ -216,10 +316,17 @@
           >так напрягалась плоть by сукин сын</a
         ></iframe
       >
+      {% else %}
+      <a target="_blank" href="https://huigniluye265.bandcamp.com/album/--2"
+        >так напрягалась плоть by сукин сын</a
+      >
+      {% endif %}
       <details>
         <summary>live videos</summary>
         <div>
           <p>one from an abandoned and squatted 1950-s barrack...</p>
+          {% if embeds %}
+          <!--  -->
           <iframe
             width="560"
             height="315"
@@ -230,10 +337,19 @@
             referrerpolicy="strict-origin-when-cross-origin"
             allowfullscreen
           ></iframe>
+          {% else %}
+          <a
+            target="_blank"
+            href="https://www.youtube.com/embed/O2wTeegmjTY?si=VojEpWOUv-wlkmfS"
+            >youtube</a
+          >
+          {% endif %}
           <p>
             and one from a "battle of the bands" type gig, ending with massive
             joint two-band jam
           </p>
+          {% if embeds %}
+          <!--  -->
           <iframe
             width="560"
             height="315"
@@ -244,6 +360,13 @@
             referrerpolicy="strict-origin-when-cross-origin"
             allowfullscreen
           ></iframe>
+          {% else %}
+          <a
+            target="_blank"
+            href="https://www.youtube.com/embed/ejNVbfLPLgc?si=nPbLkTIs-Wv7S43I&amp;start=1583"
+            >youtube</a
+          >
+          {% endif %}
         </div>
       </details>
     </section>
@@ -261,6 +384,8 @@
         <details>
           <summary>live videos</summary>
           <div>
+            {% if embeds %}
+            <!--  -->
             <iframe
               width="560"
               height="315"
@@ -271,7 +396,16 @@
               referrerpolicy="strict-origin-when-cross-origin"
               allowfullscreen
             ></iframe>
+            {% else %}
+
+            <a
+              target="_blank"
+              href="https://www.youtube.com/embed/Sw6zcbRO2lA?si=5o5SJQDcuyjjg37H"
+              >youtube</a
+            >
+            {% endif %}
             <p>(draw me like one of your 90s screamo bands)</p>
+            {% if embeds %}
             <iframe
               width="560"
               height="315"
@@ -282,6 +416,13 @@
               referrerpolicy="strict-origin-when-cross-origin"
               allowfullscreen
             ></iframe>
+            {% else %}
+            <a
+              target="_blank"
+              href="https://www.youtube.com/embed/ZwqXwsdWLc8?si=VWSEjybsvaQU8gtp"
+              >youtube</a
+            >
+            {% endif %}
           </div>
         </details>
       </p>
@@ -291,6 +432,8 @@
       <h2>DJ PULSAR</h2>
       <details>
         <summary>occasionally i DJ and here are some of my playlists</summary>
+        {% if embeds %}
+        <!--  -->
         <iframe
           style="border-radius: 12px"
           src="https://open.spotify.com/embed/playlist/3vh6pS77vxf6wf8KhyrE2q?utm_source=generator&theme=0"
@@ -321,8 +464,26 @@
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
           loading="lazy"
         ></iframe>
+        {% else %}
+        <a target="_blank"
+        
+          href="https://open.spotify.com/playlist/3vh6pS77vxf6wf8KhyrE2q?si=a5a6d852775b46ac"
+          >spotify</a
+        >
+        <a
+          target="_blank"
+          href="https://open.spotify.com/playlist/5m9wTCIrkDK8Xj1zZqxb29?si=f5f798361c2b41d1"
+          >spotify</a
+        >
+        <a
+          target="_blank"
+          href="https://open.spotify.com/playlist/5XWdOxdHuQYYokVsf7DylL?si=38a26e275d3c423a"
+          >spotify</a
+        >
+        {% endif %}
       </details>
     </section>
+
     <!-- <section>
       <h2>
         Name
@@ -333,68 +494,78 @@
       </h2>
       <p>description</p>
     </section> -->
+
     <section>
       <h2>misc</h2>
       <ul>
         <li>
-          soundtrack and sound design for several small game jam projects (<a
+          soundtrack and sound design for several small game jam projects (<a target="_blank"
             href="https://gasgiant.itch.io/piece"
             >one</a
-          >, <a href="https://gasgiant.itch.io/negation">two</a>,
-          <a href="https://gasgiant.itch.io/backup-shooter">three</a>,
-          <a href="https://gasgiant.itch.io/do-evilsh">four</a>), audio versions
+          >, <a target="_blank" href="https://gasgiant.itch.io/negation">two</a>,
+          <a target="_blank" href="https://gasgiant.itch.io/backup-shooter">three</a>,
+          <a target="_blank" href="https://gasgiant.itch.io/do-evilsh">four</a>), audio versions
           are on
-          <a href="https://soundcloud.com/nj_vs_valhalla">soundcloud</a>
+          <a target="_blank" href="https://soundcloud.com/nj_vs_valhalla">soundcloud</a>
         </li>
         <li>
-          <details>
-            <summary>
-              ambient-ish outro track for an album by a emoviolence band
-              Jautājums
-            </summary>
-            <iframe
-              width="100%"
-              height="166"
-              scrolling="no"
-              frameborder="no"
-              allow="autoplay"
-              src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/669416966&color=%23525252&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
-            ></iframe>
-            <div
-              style="
-                font-size: 10px;
-                color: #cccccc;
-                line-break: anywhere;
-                word-break: normal;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                font-family: Interstate, Lucida Grande, Lucida Sans Unicode,
-                  Lucida Sans, Garuda, Verdana, Tahoma, sans-serif;
-                font-weight: 100;
-              "
+          <div>
+            ambient-ish outro track for an album by a emoviolence band Jautājums
+          </div>
+          {% if embeds %}
+          <!--  -->
+          <iframe
+            width="100%"
+            height="166"
+            scrolling="no"
+            frameborder="no"
+            allow="autoplay"
+            src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/669416966&color=%23525252&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+          ></iframe>
+          <div
+            style="
+              font-size: 10px;
+              color: #cccccc;
+              line-break: anywhere;
+              word-break: normal;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              font-family: Interstate, Lucida Grande, Lucida Sans Unicode,
+                Lucida Sans, Garuda, Verdana, Tahoma, sans-serif;
+              font-weight: 100;
+            "
+          >
+            <a
+              href="https://soundcloud.com/nj_vs_valhalla"
+              title="Igor Vaiman"
+              target="_blank"
+              style="color: #cccccc; text-decoration: none"
+              >Igor Vaiman</a
             >
-              <a
-                href="https://soundcloud.com/nj_vs_valhalla"
-                title="Igor Vaiman"
-                target="_blank"
-                style="color: #cccccc; text-decoration: none"
-                >Igor Vaiman</a
-              >
-              ·
-              <a
-                href="https://soundcloud.com/nj_vs_valhalla/piano_outro"
-                title="piano_outro"
-                target="_blank"
-                style="color: #cccccc; text-decoration: none"
-                >piano_outro</a
-              >
-            </div>
-          </details>
+            ·
+            <a
+              href="https://soundcloud.com/nj_vs_valhalla/piano_outro"
+              title="piano_outro"
+              target="_blank"
+              style="color: #cccccc; text-decoration: none"
+              >piano_outro</a
+            >
+          </div>
+          {% else %}
+          <a
+            href="https://soundcloud.com/nj_vs_valhalla/piano_outro"
+            title="piano_outro"
+            target="_blank"
+            >piano_outro</a
+          >
+          {% endif %}
         </li>
 
         <li>
           recording, mixing and mastering for noise sludge metal band "Уберлицо"
+          {% if embeds %}
+          <!--  -->
           <iframe
             style="border: 0; width: 100%; height: 42px"
             src="https://bandcamp.com/EmbeddedPlayer/album=1502447142/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/"
@@ -403,9 +574,16 @@
               >Сибирское Евангелие by Уберлицо</a
             ></iframe
           >
+          {% else %}
+          <a target="_blank" href="https://masqeron.bandcamp.com/album/-"
+            >Сибирское Евангелие by Уберлицо</a
+          >
+          {% endif %}
         </li>
         <li>
-          drums recording for industrial noise rock "Союз Озверелых"
+          drums recording for industrial noise rock "Союз Озверелых" {% if
+          embeds %}
+          <!--  -->
           <iframe
             style="border: 0; width: 100%; height: 42px"
             src="https://bandcamp.com/EmbeddedPlayer/album=3518751531/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/"
@@ -414,10 +592,17 @@
               >Грохот немоты by Союз Озверелых</a
             ></iframe
           >
+          {% else %}
+          <a target="_blank" href="https://soyuz0zverelih.bandcamp.com/album/-"
+            >Грохот немоты by Союз Озверелых</a
+          >
+          {% endif %}
         </li>
         <li>
           <details>
             <summary>drums at Moé for some time</summary>
+            {% if embeds %}
+            <!--  -->
             <iframe
               src="https://vk.com/video_ext.php?oid=-150590882&id=456239017&hd=1"
               width="640"
@@ -426,10 +611,12 @@
               frameborder="0"
               allowfullscreen
             ></iframe>
+            {% else %} {% endif %}
           </details>
         </li>
       </ul>
     </section>
+
     {% include "license_footer.html" %}
   </body>
 </html>

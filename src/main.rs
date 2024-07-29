@@ -73,7 +73,7 @@ async fn main() {
         .route("/projects/:slug", get(project_page))
         .route("/tags/", get(tag_list))
         .route("/tags", get(tag_list))
-        .route("/music", get(|| async { MusicPage {} }))
+        .route("/music", get(music))
         .nest_service(
             "/static",
             SetResponseHeader::if_not_present(
@@ -193,4 +193,14 @@ async fn tag_list(State(state): State<AppState>) -> Result<Response, StatusCode>
 
 #[derive(Template)]
 #[template(path = "music.html")]
-struct MusicPage {}
+struct MusicPage {
+    pub embeds: bool,
+}
+
+async fn music(Query(params): Query<HashMap<String, String>>) -> MusicPage {
+    MusicPage {
+        embeds: params
+            .get("embeds")
+            .map_or(true, |v| v.to_lowercase() != "false"),
+    }
+}
