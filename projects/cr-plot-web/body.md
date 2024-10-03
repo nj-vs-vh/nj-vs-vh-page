@@ -1,6 +1,6 @@
 here's the original cosmic rays spectrum plot by [Carmelo Evoli](https://carmeloevoli.github.io/):
 
-![original CR plot by Carmelo Evoli](https://raw.githubusercontent.com/carmeloevoli/The_CR_Spectrum/master/plots/The_CR_Spectrum_2023.png)
+![original CR plot by Carmelo Evoli](https://raw.githubusercontent.com/carmeloevoli/The_CR_Spectrum/fa788cd8d32d36b4c30dce83e7269fc250464302/plots/The_CR_Spectrum_2023.png)
 
 it is very nice, but a little bit crowded already, and it still misses some datasets. there is
 a natural upper limit to how much information can fit into a static PDF. i have long been
