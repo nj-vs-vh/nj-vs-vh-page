@@ -65,7 +65,7 @@ async fn main() {
     let catalog = catalog_res.unwrap();
     tracing::info!("Loaded project catalog: {}", &catalog);
 
-    let cache_control = if is_dev { "max-age=300" } else { "no-cache" };
+    let cache_control = if !is_dev { "max-age=300" } else { "no-cache" };
     let app = Router::new()
         .route("/", get(index))
         .route("/projects", get(project_list))
