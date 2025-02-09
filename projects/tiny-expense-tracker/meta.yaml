@@ -1,0 +1,12 @@
+title: tiny expense tracker
+start:
+  year: 2024
+  month: 7
+slug: tiny-expense-tracker
+github: https://github.com/nj-vs-vh/tiny-expense-tracker
+links:
+  - name: telegram bot
+    url: https://t.me/tiny_expense_tracker_bot
+tags:
+  - code:python
+  - platform:telegram

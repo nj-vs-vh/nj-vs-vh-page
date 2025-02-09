@@ -36,3 +36,10 @@ anyway, i had a lot of fun optimizing my python code (to the point of removing `
 overhead of their constructor was the leading runtime component).
 
 overall, i'm pretty happy with how this year turned out!
+
+## 2024
+
+one more year of python, this time focusing on "sustainabilty", i.e. solving the puzzles without
+abandoning my personal and work commitments. most days solved in ~1 hr time, which is a bit
+improvement with respect to the previous years. performance and code clarity are consequently lower,
+but overall i'm very satisfied with myself this year.
