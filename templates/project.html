@@ -46,7 +46,7 @@
     </div>
     <div class="project-body">{{ project.body_html|escape("none") }}</div>
     {% if project.metadata.tags.len() > 0 %}
-    <div class="group" style="font-size: smaller">
+    <div class="group" style="font-size: smaller; padding-top: 1em; margin-top: 1em; border-top: 0.7px var(--light-gray) solid">
       {% for tag in project.metadata.tags %}
       <a href="/projects?tag={{tag}}" title="list projects tagged with {{tag}}"
         >{{ tag.name }}</a

@@ -54,6 +54,8 @@ pub struct ProjectMetadata {
     pub math: bool,
 
     pub start: Date,
+
+    #[allow(dead_code)]
     pub end: Option<Date>,
 
     #[serde(default = "Vec::new", alias = "tags")]
@@ -129,16 +131,10 @@ impl Project {
         if media_dir.exists() && media_dir.is_dir() {
             for file in media_dir.read_dir()? {
                 if let Ok(file) = file {
-                    let first_char = file
-                        .file_name()
-                        .to_str()
-                        .unwrap()
-                        .chars()
-                        .take(1)
-                        .next()
-                        .unwrap();
-                    if first_char == '.' {
-                        continue;
+                    if let Some(first_char) = file.file_name().to_string_lossy().get(0..1) {
+                        if first_char == "." {
+                            continue;
+                        }
                     }
                     let target_file = project_media_dir.join(file.file_name());
                     if target_file.exists() {

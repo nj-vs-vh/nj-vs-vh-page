@@ -13,12 +13,25 @@
   </head>
   <body>
     <h1>hi, i'm Igor</h1>
-    <p>
-      i do astroparticle physics, software on the web and around, <a href="/music">music</a>, and
-      other things.
+   <p>
+      this is a perpetually-under-construction place for me to document some of the stuff
+      i do.
     </p>
-    <p>this site is a place for me to document some of the stuff i do.</p>
-    <h3>find me</h3>
+    <p>
+      i do astroparticle physics, software on the web and around,
+      <a href="/music">music</a>, and other things.
+    </p>
+    <h3>my projects</h3>
+    <ul>
+      {% for ph in selected_project_hyperlinks %}
+      <li>{{ ph|safe }}</li>
+      {% endfor %}
+      <li class="see-more">
+        <a href="/projects">...see all projects</a> or
+        <a href="/tags">browse tags</a>
+      </li>
+    </ul>
+    <h3>find me elsewhere</h3>
     <ul>
       <li>
         i track code on
@@ -43,16 +56,6 @@
         <a href="mailto:gosha.vaiman@gmail.com" target="_blank"
           >emain to gosha.vaiman@gmail.com</a
         >
-      </li>
-    </ul>
-    <h3>my projects</h3>
-    <ul>
-      {% for ph in selected_project_hyperlinks %}
-      <li>{{ ph|safe }}</li>
-      {% endfor %}
-      <li class="see-more">
-        <a href="/projects">...see all projects</a> or
-        <a href="/tags">browse tags</a>
       </li>
     </ul>
     {% include "license_footer.html" %}
