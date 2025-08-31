@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% include "head_preamble.html" %}
     <title>nj-vs-vh | {{ project.metadata.title }}</title>
-    <link rel="stylesheet" href="/static/style.css" />
-    <link rel="icon" href="/static/favicon.ico" />
     <!-- highligh.js setup -->
     {% if project.metadata.code_languages.len() > 0 %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -17,11 +14,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/{{code_lang}}.min.js"></script>
     {% endfor %} {% endif %}
     <!-- mathjax setup -->
-    {% if project.metadata.math %}
-    <!--  -->
-    {% include "mathjax_setup.html" %}
-    <!--  -->
-    {% endif %}
+    {% if project.metadata.math %} {% include "mathjax_setup.html" %} {% endif
+    %}
   </head>
   {% if project.metadata.code_languages.len() > 0 %}
   <script>
@@ -46,7 +40,15 @@
     </div>
     <div class="project-body">{{ project.body_html|escape("none") }}</div>
     {% if project.metadata.tags.len() > 0 %}
-    <div class="group" style="font-size: smaller; padding-top: 1em; margin-top: 1em; border-top: 0.7px var(--light-gray) solid">
+    <div
+      class="group"
+      style="
+        font-size: smaller;
+        padding-top: 1em;
+        margin-top: 1em;
+        border-top: 0.7px var(--light-gray) solid;
+      "
+    >
       {% for tag in project.metadata.tags %}
       <a href="/projects?tag={{tag}}" title="list projects tagged with {{tag}}"
         >{{ tag.name }}</a
