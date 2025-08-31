@@ -1,4 +1,5 @@
 /target
 deploy.sh
+dev.sh
 static/media
 **/.DS_Store

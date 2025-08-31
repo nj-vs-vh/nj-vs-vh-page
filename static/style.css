@@ -16,8 +16,14 @@ h3 {
 }
 
 ul {
-  margin: auto 0.5em;
-  padding-left: 0.5em;
+  margin: auto 0;
+  padding-left: 1.2em;
+}
+
+li::marker {
+  content: "➜ ";
+  /* font-size: 1.2em; */
+  color: gray;
 }
 
 a {
