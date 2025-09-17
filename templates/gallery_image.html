@@ -1,83 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Igor Vaiman's personal website, portfolio, project collection and playground"
-    />
-    <title>nj-vs-vh page</title>
-    <link rel="stylesheet" href="/static/style.css" />
-    <link rel="icon" href="/static/favicon.ico" />
-  </head>
-  <body>
-    <h1>hi, i'm Igor</h1>
-    <p>
-      this is a perpetually-under-construction place for me to document some of
-      the stuff i do:
-    </p>
-    <ul>
-      <li>
-        i'm a
-        <a
-          target="_blank"
-          href="https://www.gssi.it/people/students/students-physics/item/24616-vaiman-igor"
-          >PhD student</a
-        >
-        in astroparticle physics, mostly working with Cosmic Ray theory and phenomenology and trying to apply advanced statistical methods to get the most out of our observations
-      </li>
-      <li>
-        i make software on the web and around, mostly for
-        fun, but also for good causes as part of
-        <a target="_blank" href="https://baw.team/">baw team</a>
-      </li>
-      <li>i play and produce <a href="/music">music</a></li>
-      <li>occasionally i take photos</li>
-    </ul>
-    </p>
-    <h3>my projects</h3>
-    <ul>
-      {% for ph in selected_project_hyperlinks %}
-      <li>{{ ph|safe }}</li>
-      {% endfor %}
-      <li class="see-more">
-        <a href="/projects">...see all projects</a> or
-        <a href="/tags">browse tags</a>
-      </li>
-    </ul>
-    <h3>find me elsewhere</h3>
-    <ul>
-      <li>
-        i track code on
-        <a href="https://github.com/nj-vs-vh" target="_blank">github</a>
-      </li>
-      <li>
-        details of my commercial and academic experience are on
-        <a
-          href="https://www.linkedin.com/in/igor-vaiman-110ba21a9/"
-          target="_blank"
-          >linkedin</a
-        >
-      </li>
-      <li>
-        some of my sound-related work is available on
-        <a href="https://soundcloud.com/nj_vs_valhalla" target="_blank"
-          >soundcloud</a
-        >
-      </li>
-      <li>
-        write me an
-        <a href="mailto:gosha.vaiman@gmail.com" target="_blank"
-          >emain to gosha.vaiman@gmail.com</a
-        >
-      </li>
-    </ul>
-    {% include "license_footer.html" %}
-  </body>
+
+<head>
+  {% include "head_preamble.html" %}
+  <title>nj-vs-vh page | gallery</title>
+  <meta name="description" content="Gallery" />
+</head>
+
+<body>
+  <img src="media/{{ image.filename }}" />
+  {% include "license_footer.html" %}
+</body>
+
 </html>
-<style>
-  li.see-more::marker {
-    color: transparent;
-  }
-</style>

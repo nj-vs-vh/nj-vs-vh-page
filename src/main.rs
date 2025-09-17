@@ -7,6 +7,7 @@ use axum::{
     routing::get,
     Router,
 };
+use gallery::Gallery;
 use project::{Project, ProjectTag, TagGroups};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
@@ -19,12 +20,14 @@ use tracing_subscriber::FmtSubscriber;
 use templates::ProjectHyperlink;
 
 mod date;
+mod gallery;
 mod project;
 mod templates;
 
 #[derive(Clone)]
 struct AppState {
     project_catalog: project::ProjectCatalog,
+    gallery: gallery::Gallery,
 }
 
 #[tokio::main]
@@ -65,7 +68,18 @@ async fn main() {
     let catalog = catalog_res.unwrap();
     tracing::info!("Loaded project catalog: {}", &catalog);
 
-    let cache_control = if !is_dev { "max-age=300" } else { "no-cache" };
+    let gallery_dir_string = env::var("GALLERY_DIR").unwrap_or("gallery".to_owned());
+    let gallery_dir = std::path::Path::new(&gallery_dir_string);
+    tracing::info!("Serving gallery files from {:?}", &gallery_dir);
+    let gr = Gallery::load(gallery_dir);
+    if let Err(e) = gr {
+        tracing::error!("Failed to load gallery: {}", e);
+        return;
+    }
+    let gallery = gr.unwrap();
+    tracing::info!("Loaded gallery: {}", &gallery);
+
+    let static_content_cache = if !is_dev { "max-age=300" } else { "no-cache" };
     let app = Router::new()
         .route("/", get(index))
         .route("/projects", get(project_list))
@@ -74,25 +88,36 @@ async fn main() {
         .route("/tags/", get(tag_list))
         .route("/tags", get(tag_list))
         .route("/music", get(music))
+        // .route("/gallery", get(music))
+        .route("/gallery/:slug", get(gallery_image))
         .nest_service(
             "/static",
             SetResponseHeader::if_not_present(
                 ServeDir::new(static_dir),
                 header::CACHE_CONTROL,
-                header::HeaderValue::from_static(&cache_control),
+                header::HeaderValue::from_static(&static_content_cache),
+            ),
+        )
+        .nest_service(
+            "/gallery/media",
+            SetResponseHeader::if_not_present(
+                ServeDir::new(gallery_dir),
+                header::CACHE_CONTROL,
+                header::HeaderValue::from_static(&static_content_cache),
             ),
         )
         .nest_service(
             "/projects/media",
             SetResponseHeader::if_not_present(
-                ServeDir::new(&project_media_dir),
+                ServeDir::new(project_media_dir),
                 header::CACHE_CONTROL,
-                header::HeaderValue::from_static(&cache_control),
+                header::HeaderValue::from_static(&static_content_cache),
             ),
         )
         .layer(TraceLayer::new_for_http())
         .with_state(AppState {
             project_catalog: catalog,
+            gallery,
         });
 
     let port = env::var("PORT").unwrap_or("3284".to_owned());
@@ -202,5 +227,23 @@ async fn music(Query(params): Query<HashMap<String, String>>) -> MusicPage {
         embeds: params
             .get("embeds")
             .map_or(true, |v| v.to_lowercase() != "false"),
+    }
+}
+
+#[derive(Template)]
+#[template(path = "gallery_image.html")]
+struct GalleryImagePage<'a> {
+    image: &'a gallery::GalleryImage,
+}
+
+async fn gallery_image<'a>(
+    State(state): State<AppState>,
+    Path(slug): Path<String>,
+) -> Result<Response, StatusCode> {
+    tracing::info!("{}", &slug);
+    if let Some(image) = state.gallery.find(&slug) {
+        Ok(GalleryImagePage { image }.into_response())
+    } else {
+        Err(StatusCode::NOT_FOUND)
     }
 }
