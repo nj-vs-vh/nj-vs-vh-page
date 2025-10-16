@@ -240,7 +240,6 @@ async fn gallery_image<'a>(
     State(state): State<AppState>,
     Path(slug): Path<String>,
 ) -> Result<Response, StatusCode> {
-    tracing::info!("{}", &slug);
     if let Some(image) = state.gallery.find(&slug) {
         Ok(GalleryImagePage { image }.into_response())
     } else {

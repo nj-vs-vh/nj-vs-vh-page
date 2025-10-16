@@ -1,3 +1,5 @@
+use exif;
+use jiff::civil::DateTime;
 use std::{
     fmt::Display,
     io,
@@ -6,8 +8,9 @@ use std::{
 
 #[derive(Clone, Debug)]
 pub struct GalleryImage {
-    pub filepath: PathBuf,
     pub filename: String,
+    pub title: Option<String>,
+    pub timestamp: DateTime,
 }
 
 impl GalleryImage {
@@ -29,24 +32,53 @@ impl GalleryImage {
         let file = std::fs::File::open(&filepath)?;
         let mut bufreader = std::io::BufReader::new(&file);
         let exifreader = exif::Reader::new();
-        let exif = exifreader
+        let exif_data = exifreader
             .read_from_container(&mut bufreader)
             .map_err(|e| {
                 io::Error::new(
                     io::ErrorKind::Other,
-                    format!("Failed to parse EXIF metadata from the image: {}", e),
+                    format!(
+                        "Failed to parse EXIF metadata from the image {:?}: {}",
+                        filepath, e
+                    ),
                 )
             })?;
-        // for f in exif.fields() {
+        // for f in exif_data.fields() {
         //     println!(
         //         "{} | {} | {}",
         //         f.tag,
         //         f.ifd_num,
-        //         f.display_value().with_unit(&exif)
+        //         f.display_value().with_unit(&exif_data)
         //     );
         // }
 
-        Ok(GalleryImage { filepath, filename })
+        Ok(GalleryImage {
+            filename,
+            title: exif_data
+                .get_field(exif::Tag::ImageDescription, exif::In::PRIMARY)
+                .map(|f| f.display_value().to_string().trim_matches('"').to_string()),
+            timestamp: exif_data
+                .get_field(exif::Tag::DateTimeOriginal, exif::In::PRIMARY)
+                .ok_or(io::Error::new(
+                    io::ErrorKind::Other,
+                    format!(
+                        "EXIF metadata for {:?} misses DateTimeOriginal field ",
+                        filepath
+                    ),
+                ))?
+                .display_value()
+                .to_string()
+                .parse()
+                .map_err(|e| {
+                    io::Error::new(
+                        io::ErrorKind::Other,
+                        format!(
+                            "Failed to parse DateTimeOriginal from the image {:?}: {}",
+                            filepath, e
+                        ),
+                    )
+                })?,
+        })
     }
 }
 
@@ -69,23 +101,26 @@ impl Gallery {
                 "gallery dir must be a directory".to_owned(),
             ));
         }
-        let images: Vec<GalleryImage> = gallery_dir
+        let mut images: Vec<GalleryImage> = gallery_dir
             .read_dir()?
             .filter_map(|maybe_dir_entry| {
                 if let Ok(entry) = maybe_dir_entry {
                     if entry.file_name().to_string_lossy().chars().next() == Some('.') {
                         return None;
                     }
-                    let gi_res = GalleryImage::load(entry.path());
-                    if let Ok(image) = gi_res {
-                        return Some(image);
-                    } else {
-                        tracing::warn!("Failed to load gallery image from {:?}", entry);
+
+                    match GalleryImage::load(entry.path()) {
+                        Ok(image) => return Some(image),
+                        Err(e) => {
+                            tracing::warn!("Failed to load gallery image from {:?}: {}", entry, e);
+                        }
                     }
                 }
                 None
             })
             .collect();
+
+        images.sort_by_key(|img| img.timestamp);
 
         Ok(Gallery { images })
     }

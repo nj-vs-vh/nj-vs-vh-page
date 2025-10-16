@@ -1,11 +1,12 @@
 :root {
   --secondary-blue: rgb(128, 128, 255);
-  --light-gray: rgb(184, 184, 184)
+  --light-gray: rgb(184, 184, 184);
+  --main-column-width: min(700px, 95vw);
 }
 
 body {
   margin: 2rem auto;
-  width: min(700px, 95vw);
+  width: var(--main-column-width);
   font-family: 'Courier New', Courier, monospace;
 }
 
