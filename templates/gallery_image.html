@@ -26,27 +26,39 @@
     </header>
     <div>
       <img id="photo" src="media/{{ found.image.filename }}" />
-      <div style="display: flex; justify-content: space-between; gap: 2rem;">
+      <div style="display: flex; justify-content: space-between; gap: 3rem;">
         {% match found.image.title %}
         {% when Some with (title) %}
         <span>{{title}}</span>
         {% when None %}
         {% endmatch %}
         <!--  -->
-        <span>{{found.image.timestamp.date()}}</span>
+        <span style="text-wrap-mode: nowrap;">{{found.image.timestamp.date()}}</span>
       </div>
 
       <details class="settings-footer">
-        <summary>Settings</summary>
-        <span style="display: flex; flex-direction: row; gap: 1rem; align-items: center;">
-          <input type="range" id="gradients-opacity" name="gradients" min="0" max="100" value="50" style="width: 5rem;">
-          <label for="gradients-opacity">Fancy background</label>
-        </span>
-        <div>
-          {% for color in found.image.colorpalette %}
-          <span style="background-color: #{{color}};">#{{color}}</span>
-          {% endfor %}
-        </div>
+        <summary>extra</summary>
+        <ul>
+          <li>
+            <span style="display: flex; flex-direction: row; gap: 0.5rem; align-items: center;">
+              <label for="gradients-opacity">background opacity</label>
+              <input type="range" id="gradients-opacity" name="gradients" min="0" max="100" value="50"
+                style="width: 5rem;">
+            </span>
+          </li>
+          <li>
+            <div style="max-width: 700px;">
+              <span>color palette</span>
+              {% for color in found.image.colorpalette %}
+              <span style="background-color: #{{color}};">#{{color}}</span>
+              {% endfor %}
+            </div>
+          </li>
+
+          <li>
+            <a href="media/{{ found.image.filename }}" target="_blank">hi-res</a>
+          </li>
+        </ul>
       </details>
 
       {% include "license_footer.html" %}

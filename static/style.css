@@ -1,7 +1,7 @@
 :root {
   --secondary-blue: rgb(128, 128, 255);
   --light-gray: rgb(184, 184, 184);
-  --main-column-width: min(700px, 95vw);
+  --main-column-width: min(700px, 90vw);
 }
 
 body {

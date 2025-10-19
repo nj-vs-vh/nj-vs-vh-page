@@ -64,7 +64,7 @@ impl GalleryImage {
                 )
             };
 
-            let thumb_width: u32 = 230;
+            let thumb_width: u32 = 300;
             let thumb_height = 3 * thumb_width / 4;
             let thumb_img = cropped_img.thumbnail(thumb_width, thumb_height);
 
