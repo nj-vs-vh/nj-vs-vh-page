@@ -270,7 +270,7 @@ async fn gallery_page<'a>(State(state): State<AppState>) -> Result<Response, Sta
 #[derive(Template)]
 #[template(path = "gallery_image.html")]
 struct GalleryImagePage<'a> {
-    image: &'a gallery::GalleryImage,
+    found: gallery::FoundGalleryImage<'a>,
 }
 
 async fn gallery_image<'a>(
@@ -278,7 +278,7 @@ async fn gallery_image<'a>(
     Path(slug): Path<String>,
 ) -> Result<Response, StatusCode> {
     if let Some(image) = state.gallery.find(&slug) {
-        Ok(GalleryImagePage { image }.into_response())
+        Ok(GalleryImagePage { found: image }.into_response())
     } else {
         Err(StatusCode::NOT_FOUND)
     }

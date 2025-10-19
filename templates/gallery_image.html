@@ -9,24 +9,50 @@
 
 <body>
   <div class="main-column">
-    <header><a href="/">home</a> / <a href="/gallery">gallery</a> /</header>
+    <header><a href="/">home</a> / <a href="/gallery">gallery</a> /
+      {% if let Some(prev) = found.prev %}
+      <a id="goto-prev" href="{{prev.filename}}">&lt;</a>
+      {% else %}
+      <span>&lt;</span>
+      {% endif %}
+      <!--  -->
+      {{ found.image.filename }}
+      <!--  -->
+      {% if let Some(next) = found.next %}
+      <a id="goto-next" href="{{next.filename}}">&gt;</a>
+      {% else %}
+      <span>&gt;</span>
+      {% endif %}
+    </header>
     <div>
-      <img id="photo" src="media/{{ image.filename }}" />
+      <img id="photo" src="media/{{ found.image.filename }}" />
       <div style="display: flex; justify-content: space-between; gap: 2rem;">
-        {% match image.title %}
+        {% match found.image.title %}
         {% when Some with (title) %}
         <span>{{title}}</span>
         {% when None %}
         {% endmatch %}
         <!--  -->
-        <span>{{image.timestamp.date()}}</span>
+        <span>{{found.image.timestamp.date()}}</span>
       </div>
       {% include "license_footer.html" %}
     </div>
   </div>
 </body>
 
-
+<script>
+  document.addEventListener("keyup", (event) => {
+    event.preventDefault();
+    let btn = null;
+    if (["ArrowLeft", "KeyH"].includes(event.code)) {
+      btn = document.getElementById("goto-prev");
+    }
+    if (["ArrowRight", "KeyL"].includes(event.code)) {
+      btn = document.getElementById("goto-next");
+    }
+    if (btn !== null) btn.click();
+  });
+</script>
 
 <style>
   body {

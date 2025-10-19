@@ -170,7 +170,26 @@ impl Gallery {
         Ok(Gallery { images })
     }
 
-    pub fn find<'a>(&'a self, slug: &str) -> Option<&'a GalleryImage> {
-        self.images.iter().find(|&img| img.filename == slug)
+    pub fn find<'a>(&'a self, slug: &str) -> Option<FoundGalleryImage<'a>> {
+        self.images
+            .iter()
+            .enumerate()
+            .find(|&(_, img)| img.filename == slug)
+            .map(|(index, img)| FoundGalleryImage {
+                image: img,
+                prev: if index > 0 {
+                    self.images.get(index - 1)
+                } else {
+                    None
+                },
+                next: self.images.get(index + 1),
+            })
     }
+}
+
+#[derive(Clone)]
+pub struct FoundGalleryImage<'a> {
+    pub image: &'a GalleryImage,
+    pub prev: Option<&'a GalleryImage>,
+    pub next: Option<&'a GalleryImage>,
 }
