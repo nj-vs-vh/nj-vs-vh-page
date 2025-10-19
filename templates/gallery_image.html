@@ -92,9 +92,10 @@
 
   const LOCALSTORAGE_KEY = "gradient-opacity";
   addEventListener("load", (_) => {
-    let storedOpacity = parseFloat(localStorage.getItem(LOCALSTORAGE_KEY) || 0.75);
-    document.getElementById("blobs-container").style.opacity = storedOpacity;
+    let storedOpacity = parseFloat(localStorage.getItem(LOCALSTORAGE_KEY) || 0.5);
     document.getElementById("gradients-opacity").setAttribute("value", (100 * storedOpacity).toString());
+    document.getElementById("blobs-container").style.opacity = storedOpacity;
+    document.getElementById("blobs-container").style.setProperty("transition", "opacity 1s ease-in");
   });
   document.getElementById("gradients-opacity").addEventListener("change", (e) => {
     let newOpacity = parseFloat(e.target.value) / 100;
@@ -141,6 +142,7 @@
     overflow: hidden;
     z-index: -1;
     background: white;
+    opacity: 0;
   }
 
   .blob {
