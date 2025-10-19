@@ -1,6 +1,7 @@
 /target
 deploy.sh
 dev.sh
-static/media
+static/project-media
+static/gallery-thumbnails
 **/.DS_Store
 gallery

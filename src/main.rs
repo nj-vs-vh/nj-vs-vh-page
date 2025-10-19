@@ -43,7 +43,7 @@ async fn main() {
     let static_dir_string = env::var("STATIC_DIR").unwrap_or("static".to_owned());
     let static_dir = std::path::Path::new(&static_dir_string);
     tracing::info!("Serving static files from {:?}", &static_dir);
-    let project_media_dir = static_dir.join("media");
+    let project_media_dir = static_dir.join("project-media");
     if let Ok(dir_iter) = project_media_dir.read_dir() {
         dir_iter.for_each(|file| {
             if let Ok(file) = file {
@@ -55,6 +55,15 @@ async fn main() {
     }
     if let Err(e) = std::fs::create_dir_all(&project_media_dir) {
         tracing::error!("Error creating media dir {:?}: {}", project_media_dir, e);
+        return;
+    };
+    let gallery_thumbnails_dir = static_dir.join("gallery-thumbnails");
+    if let Err(e) = std::fs::create_dir_all(&gallery_thumbnails_dir) {
+        tracing::error!(
+            "Error creating thumbnails dir {:?}: {}",
+            &gallery_thumbnails_dir,
+            e
+        );
         return;
     };
 
@@ -71,7 +80,7 @@ async fn main() {
     let gallery_dir_string = env::var("GALLERY_DIR").unwrap_or("gallery".to_owned());
     let gallery_dir = std::path::Path::new(&gallery_dir_string);
     tracing::info!("Serving gallery files from {:?}", &gallery_dir);
-    let gr = Gallery::load(gallery_dir);
+    let gr = Gallery::load(gallery_dir, &gallery_thumbnails_dir);
     if let Err(e) = gr {
         tracing::error!("Failed to load gallery: {}", e);
         return;
@@ -88,7 +97,7 @@ async fn main() {
         .route("/tags/", get(tag_list))
         .route("/tags", get(tag_list))
         .route("/music", get(music))
-        // .route("/gallery", get(music))
+        .route("/gallery", get(gallery_page))
         .route("/gallery/:slug", get(gallery_image))
         .nest_service(
             "/static",
@@ -102,6 +111,14 @@ async fn main() {
             "/gallery/media",
             SetResponseHeader::if_not_present(
                 ServeDir::new(gallery_dir),
+                header::CACHE_CONTROL,
+                header::HeaderValue::from_static(&static_content_cache),
+            ),
+        )
+        .nest_service(
+            "/gallery/thumbnails",
+            SetResponseHeader::if_not_present(
+                ServeDir::new(gallery_thumbnails_dir),
                 header::CACHE_CONTROL,
                 header::HeaderValue::from_static(&static_content_cache),
             ),
@@ -228,6 +245,26 @@ async fn music(Query(params): Query<HashMap<String, String>>) -> MusicPage {
             .get("embeds")
             .map_or(true, |v| v.to_lowercase() != "false"),
     }
+}
+
+#[derive(Template)]
+#[template(path = "gallery.html")]
+struct GalleryPage<'a> {
+    // page: usize,  // todo: pagination
+    images_by_year: Vec<(i16, &'a [gallery::GalleryImage])>,
+}
+
+async fn gallery_page<'a>(State(state): State<AppState>) -> Result<Response, StatusCode> {
+    Ok(GalleryPage {
+        // page: 0,
+        images_by_year: state
+            .gallery
+            .images
+            .chunk_by(|i1, i2| i1.year() == i2.year())
+            .map(|photos| (photos[0].year(), photos))
+            .collect(),
+    }
+    .into_response())
 }
 
 #[derive(Template)]

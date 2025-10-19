@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% include "head_preamble.html" %}
+  <title>nj-vs-vh page | gallery</title>
+  <meta name="description" content="Gallery" />
+</head>
+
+<body>
+  <header><a href="/">home</a> /</header>
+  <h1>photo gallery</h1>
+  <p>
+    photos are mostly taken with my trusty
+    <a href="https://global.canon/en/c-museum/product/dcc581.html" target="_blank">Canon PowerShot G11</a>
+    point-and-shoot camera
+    and processed in <a href="https://www.darktable.org/" target="_blank">darktable</a>.
+    more casual phone shoots are on my
+    <a href="https://www.instagram.com/nj_vs_valhalla/" target="_blank">instagram</a>.
+  </p>
+  {% for year_images in images_by_year %}
+  <h3>{{year_images.0}}</h3>
+  <div class="gallery-container">
+    {% for image in year_images.1 %}
+    <a class="photo-container" href="gallery/{{ image.filename }}">
+      <img class="photo" src="gallery/thumbnails/{{ image.filename }}" />
+    </a>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  {% include "license_footer.html" %}
+</body>
+
+<style>
+  div.gallery-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  a.photo-container {
+    display: flex;
+  }
+</style>
+
+</html>
