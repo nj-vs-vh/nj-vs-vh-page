@@ -21,6 +21,7 @@ use templates::ProjectHyperlink;
 
 mod date;
 mod gallery;
+mod median_cut;
 mod project;
 mod templates;
 

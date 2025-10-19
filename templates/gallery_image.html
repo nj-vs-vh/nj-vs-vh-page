@@ -35,8 +35,28 @@
         <!--  -->
         <span>{{found.image.timestamp.date()}}</span>
       </div>
+
+      <details class="settings-footer">
+        <summary>Settings</summary>
+        <span style="display: flex; flex-direction: row; gap: 1rem; align-items: center;">
+          <input type="range" id="gradients-opacity" name="gradients" min="0" max="100" value="50" style="width: 5rem;">
+          <label for="gradients-opacity">Fancy background</label>
+        </span>
+        <div>
+          {% for color in found.image.colorpalette %}
+          <span style="background-color: #{{color}};">#{{color}}</span>
+          {% endfor %}
+        </div>
+      </details>
+
       {% include "license_footer.html" %}
     </div>
+  </div>
+  <!--  -->
+  <div id="blobs-container">
+    {% for color in found.image.colorpalette %}
+    <div class="blob" style="--color:#{{color}};"></div>
+    {% endfor %}
   </div>
 </body>
 
@@ -52,6 +72,35 @@
     }
     if (btn !== null) btn.click();
   });
+
+  document.querySelectorAll('.blob').forEach(blob => {
+    const sizeVw = Math.round(40 + Math.random() * 40);
+    blob.style.setProperty('--size', `${sizeVw}vw`);
+    for (posProperty of ["left", "top"]) {
+      blob.style.setProperty(posProperty, `${Math.round(-sizeVw / 2 + 100 * Math.random())}%`);
+    }
+    blob.style.opacity = blobLightness(blob) * 1.0;
+  });
+
+  function blobLightness(blobEl) {
+    const color = getComputedStyle(blobEl).getPropertyValue('--color').trim().slice(1); // remove # in front
+    let r = parseInt(color.slice(0, 2), 16) / 255;
+    let g = parseInt(color.slice(2, 4), 16) / 255;
+    let b = parseInt(color.slice(4, 6), 16) / 255;
+    return (r + g + b) / 3;
+  }
+
+  const LOCALSTORAGE_KEY = "gradient-opacity";
+  addEventListener("load", (_) => {
+    let storedOpacity = parseFloat(localStorage.getItem(LOCALSTORAGE_KEY) || 0.75);
+    document.getElementById("blobs-container").style.opacity = storedOpacity;
+    document.getElementById("gradients-opacity").setAttribute("value", (100 * storedOpacity).toString());
+  });
+  document.getElementById("gradients-opacity").addEventListener("change", (e) => {
+    let newOpacity = parseFloat(e.target.value) / 100;
+    document.getElementById("blobs-container").style.opacity = newOpacity;
+    localStorage.setItem(LOCALSTORAGE_KEY, newOpacity.toString());
+  })
 </script>
 
 <style>
@@ -66,24 +115,43 @@
   }
 
   img#photo {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
     max-height: 75vh;
+    box-shadow: 0 0 120px white;
   }
 
-  header,
-  .caption-container {
+  header {
     width: var(--main-column-width);
+    z-index: 10;
+  }
+
+  .settings-footer {
+    font-size: smaller;
+    padding-top: 1em;
+    margin-top: 1em;
+    border-top: 0.7px var(--light-gray) solid;
+  }
+
+  /* background blobs */
+
+  #blobs-container {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: -1;
+    background: white;
+  }
+
+  .blob {
+    position: absolute;
+    width: var(--size, 400px);
+    height: var(--size, 400px);
+    background: radial-gradient(circle at center, var(--color) 0%, transparent 100%);
+    filter: blur(100px);
+    mix-blend-mode: multiply;
   }
 </style>
 
-<!-- <script>
-  addEventListener(
-    "load",
-    (e) => {
-      document.getElementById("photo").scrollIntoView({ behavior: "smooth", block: "center" });
-    },
-  )
-</script> -->
 
 </html>

@@ -1,17 +1,22 @@
 use exif;
+use image::{GenericImageView, Pixel, Rgb};
 use jiff::civil::DateTime;
 use std::{
     cmp::Reverse,
     fmt::Display,
-    io,
+    fs::File,
+    io::{self, Read, Write},
     path::{Path, PathBuf},
 };
+
+use crate::median_cut::median_cut;
 
 #[derive(Clone, Debug)]
 pub struct GalleryImage {
     pub filename: String,
     pub title: Option<String>,
     pub timestamp: DateTime,
+    pub colorpalette: Vec<String>,
 }
 
 impl GalleryImage {
@@ -30,9 +35,9 @@ impl GalleryImage {
             .to_owned();
 
         // reading image contents and generating thumbnail
-
         let thumb_path = thumbnails_dir.join(&filename);
-        if !thumb_path.exists() {
+        let colorpalette_path = filepath.with_file_name(format!(".{}.colors", &filename));
+        if !thumb_path.exists() || !colorpalette_path.exists() {
             let full_img = image::open(filepath).map_err(|e| {
                 io::Error::new(
                     io::ErrorKind::Other,
@@ -70,8 +75,36 @@ impl GalleryImage {
                 ));
             }
 
-            // todo: generate colors and cache them in a text file
+            let mut pixels: Vec<[u8; 3]> = thumb_img
+                .pixels()
+                .map(|(_, _, color)| [color.0[0], color.0[1], color.0[2]])
+                .collect();
+            let colorpalette = median_cut(pixels.as_mut_slice(), 3).unwrap();
+            let lumas: Vec<u8> = colorpalette
+                .iter()
+                .map(|rgb| Rgb(rgb.to_owned()).to_luma().0[0])
+                .collect();
+            let luma_min: u8 = 60;
+            let colorpalette_codes: Vec<String> = colorpalette
+                .iter()
+                .zip(lumas.iter())
+                .filter(|(_, luma)| **luma > luma_min)
+                .map(|(color, _)| color.map(|value| format!("{:02x}", value)).join(""))
+                .collect();
+            write!(
+                File::create(&colorpalette_path)?,
+                "{}",
+                colorpalette_codes.join("\n")
+            )?;
         };
+
+        let mut contents = String::new();
+        File::open(&colorpalette_path)?.read_to_string(&mut contents)?;
+        let colorpalette: Vec<String> = contents
+            .lines()
+            .filter(|s| s.len() == 6)
+            .map(|s| s.to_owned())
+            .collect();
 
         // reading image metadata from EXIF
         let rawfile = std::fs::File::open(filepath)?;
@@ -115,6 +148,7 @@ impl GalleryImage {
                         ),
                     )
                 })?,
+            colorpalette,
         })
     }
 

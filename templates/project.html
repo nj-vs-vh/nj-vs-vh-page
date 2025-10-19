@@ -1,65 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    {% include "head_preamble.html" %}
-    <title>nj-vs-vh | {{ project.metadata.title }}</title>
-    <!-- highligh.js setup -->
-    {% if project.metadata.code_languages.len() > 0 %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css"
-    />
-    {% for code_lang in project.metadata.code_languages %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/{{code_lang}}.min.js"></script>
-    {% endfor %} {% endif %}
-    <!-- mathjax setup -->
-    {% if project.metadata.math %} {% include "mathjax_setup.html" %} {% endif
-    %}
-  </head>
-  {% if project.metadata.code_languages.len() > 0 %}
-  <script>
-    hljs.highlightAll();
-  </script>
-  {% endif %}
-  <body>
-    <header><a href="/">home</a> / <a href="/projects">projects</a> /</header>
-    <h1 style="margin-bottom: 0.3em">{{ project.metadata.title }}</h1>
-    <div class="stack">
-      <div>{{ project.metadata.start }}</div>
 
-      <!--  -->
-      {% if project.metadata.links.len() > 0 %}
-      <div class="group">
-        <strong>links:</strong>
-        {% for link in project.metadata.links %}
-        <a href="{{link.url}}" target="_blank">{{ link.name }}</a>
-        {% endfor %}
-      </div>
-      {% endif %}
-    </div>
-    <div class="project-body">{{ project.body_html|escape("none") }}</div>
-    {% if project.metadata.tags.len() > 0 %}
-    <div
-      class="group"
-      style="
-        font-size: smaller;
-        padding-top: 1em;
-        margin-top: 1em;
-        border-top: 0.7px var(--light-gray) solid;
-      "
-    >
-      {% for tag in project.metadata.tags %}
-      <a href="/projects?tag={{tag}}" title="list projects tagged with {{tag}}"
-        >{{ tag.name }}</a
-      >
+<head>
+  {% include "head_preamble.html" %}
+  <title>nj-vs-vh | {{ project.metadata.title }}</title>
+  <!-- highligh.js setup -->
+  {% if project.metadata.code_languages.len() > 0 %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css" />
+  {% for code_lang in project.metadata.code_languages %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/{{code_lang}}.min.js"></script>
+  {% endfor %} {% endif %}
+  <!-- mathjax setup -->
+  {% if project.metadata.math %} {% include "mathjax_setup.html" %} {% endif
+  %}
+</head>
+{% if project.metadata.code_languages.len() > 0 %}
+<script>
+  hljs.highlightAll();
+</script>
+{% endif %}
+
+<body>
+  <header><a href="/">home</a> / <a href="/projects">projects</a> /</header>
+  <h1 style="margin-bottom: 0.3em">{{ project.metadata.title }}</h1>
+  <div class="stack">
+    <div>{{ project.metadata.start }}</div>
+
+    <!--  -->
+    {% if project.metadata.links.len() > 0 %}
+    <div class="group">
+      <strong>links:</strong>
+      {% for link in project.metadata.links %}
+      <a href="{{link.url}}" target="_blank">{{ link.name }}</a>
       {% endfor %}
     </div>
-    {% endif %} {% include "license_footer.html" %}
-  </body>
+    {% endif %}
+  </div>
+  <div class="project-body">{{ project.body_html|escape("none") }}</div>
+  {% if project.metadata.tags.len() > 0 %}
+  <div class="group tag-footer">
+    {% for tag in project.metadata.tags %}
+    <a href="/projects?tag={{tag}}" title="list projects tagged with {{tag}}">{{ tag.name }}</a>
+    {% endfor %}
+  </div>
+  {% endif %} {% include "license_footer.html" %}
+</body>
+
 </html>
 <style>
-  .project-body > p {
+  .project-body>p {
     text-align: justify;
   }
 
@@ -74,5 +65,12 @@
     flex-direction: row;
     gap: 1.5rem;
     align-items: baseline;
+  }
+
+  .tag-footer {
+    font-size: smaller;
+    padding-top: 1em;
+    margin-top: 1em;
+    border-top: 0.7px var(--light-gray) solid;
   }
 </style>
