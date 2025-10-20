@@ -67,6 +67,15 @@ async fn main() {
         );
         return;
     };
+    let gallery_stdmedia_dir = static_dir.join("gallery-media");
+    if let Err(e) = std::fs::create_dir_all(&gallery_stdmedia_dir) {
+        tracing::error!(
+            "Error creating gallery media dir {:?}: {}",
+            &gallery_stdmedia_dir,
+            e
+        );
+        return;
+    };
 
     let projects_dir = env::var("PROJECTS_DIR").unwrap_or("projects".to_owned());
     let catalog_res =
@@ -81,7 +90,7 @@ async fn main() {
     let gallery_dir_string = env::var("GALLERY_DIR").unwrap_or("gallery".to_owned());
     let gallery_dir = std::path::Path::new(&gallery_dir_string);
     tracing::info!("Serving gallery files from {:?}", &gallery_dir);
-    let gr = Gallery::load(gallery_dir, &gallery_thumbnails_dir);
+    let gr = Gallery::load(gallery_dir, &gallery_stdmedia_dir, &gallery_thumbnails_dir);
     if let Err(e) = gr {
         tracing::error!("Failed to load gallery: {}", e);
         return;
@@ -109,7 +118,7 @@ async fn main() {
             ),
         )
         .nest_service(
-            "/gallery/media",
+            "/gallery/full",
             SetResponseHeader::if_not_present(
                 ServeDir::new(gallery_dir),
                 header::CACHE_CONTROL,
@@ -120,6 +129,14 @@ async fn main() {
             "/gallery/thumbnails",
             SetResponseHeader::if_not_present(
                 ServeDir::new(gallery_thumbnails_dir),
+                header::CACHE_CONTROL,
+                header::HeaderValue::from_static(&static_content_cache),
+            ),
+        )
+        .nest_service(
+            "/gallery/media",
+            SetResponseHeader::if_not_present(
+                ServeDir::new(gallery_stdmedia_dir),
                 header::CACHE_CONTROL,
                 header::HeaderValue::from_static(&static_content_cache),
             ),

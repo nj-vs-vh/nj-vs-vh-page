@@ -20,7 +20,11 @@ pub struct GalleryImage {
 }
 
 impl GalleryImage {
-    pub fn load(filepath: &PathBuf, thumbnails_dir: &Path) -> io::Result<GalleryImage> {
+    pub fn load(
+        filepath: &PathBuf,
+        stdmedia_dir: &Path,
+        thumbnails_dir: &Path,
+    ) -> io::Result<GalleryImage> {
         let filename = filepath
             .file_name()
             .ok_or(io::Error::new(
@@ -35,15 +39,34 @@ impl GalleryImage {
             .to_owned();
 
         // reading image contents and generating thumbnail
+        let standard_media_path = stdmedia_dir.join(&filename);
         let thumb_path = thumbnails_dir.join(&filename);
         let colorpalette_path = filepath.with_file_name(format!(".{}.colors", &filename));
-        if !thumb_path.exists() || !colorpalette_path.exists() {
+        if !standard_media_path.exists() || !thumb_path.exists() || !colorpalette_path.exists() {
             let full_img = image::open(filepath).map_err(|e| {
                 io::Error::new(
                     io::ErrorKind::Other,
                     format!("Failed to read image file {:?}: {}", filepath, e),
                 )
             })?;
+
+            // producing the main image to be displayed on the web
+            let max_display_width: u32 = 2000;
+            let max_display_height: u32 = 1000;
+            let standard_img = full_img.resize(
+                max_display_width,
+                max_display_height,
+                image::imageops::FilterType::Lanczos3,
+            );
+            if let Err(e) = standard_img.save(standard_media_path) {
+                return Err(io::Error::new(
+                    io::ErrorKind::Other,
+                    format!(
+                        "Failed to save standard-size image from {:?}: {}",
+                        filepath, e
+                    ),
+                ));
+            };
 
             // thumbnail aspect ratio is always 4:3 for gallery layout, so we crop image first
             let cropped_height = full_img.width() * 3 / 4;
@@ -169,14 +192,14 @@ impl Display for Gallery {
 }
 
 impl Gallery {
-    pub fn load(gallery_dir: &Path, thumbnails_dir: &Path) -> io::Result<Gallery> {
-        tracing::info!("Loading gallery from {:?}", gallery_dir);
-        if !gallery_dir.is_dir() {
+    pub fn load(src_dir: &Path, stdmedia_dir: &Path, thumbnails_dir: &Path) -> io::Result<Gallery> {
+        tracing::info!("Loading gallery from {:?}", src_dir);
+        if !src_dir.is_dir() {
             return Err(io::Error::other(
                 "gallery dir must be a directory".to_owned(),
             ));
         }
-        let mut images: Vec<GalleryImage> = gallery_dir
+        let mut images: Vec<GalleryImage> = src_dir
             .read_dir()?
             .filter_map(|maybe_dir_entry| match maybe_dir_entry {
                 Ok(entry) => {
@@ -184,7 +207,7 @@ impl Gallery {
                         return None;
                     }
 
-                    match GalleryImage::load(&entry.path(), thumbnails_dir) {
+                    match GalleryImage::load(&entry.path(), stdmedia_dir, thumbnails_dir) {
                         Ok(image) => Some(image),
                         Err(e) => {
                             tracing::warn!("Failed to load gallery image from {:?}: {}", entry, e);
