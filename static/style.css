@@ -7,7 +7,7 @@
 body {
   margin: 2rem auto;
   width: var(--main-column-width);
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
 }
 
 h3 {
@@ -28,11 +28,25 @@ li::marker {
 }
 
 a {
-    text-decoration: none;
-    color: blue;
+  text-decoration: none;
+  color: blue;
 }
 a:hover {
-    background-color: rgba(115, 150, 232, 0.243);
+  background-color: rgba(115, 150, 232, 0.243);
+}
+
+button.link-like-button {
+  font-family: inherit;
+  background: none;
+  border: none;
+  padding: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: blue;
+}
+button.link-like-button:hover {
+  background-color: rgba(115, 150, 232, 0.243);
 }
 
 img {

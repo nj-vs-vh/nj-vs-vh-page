@@ -175,8 +175,8 @@ impl GalleryImage {
         })
     }
 
-    pub fn year(&self) -> i16 {
-        return self.timestamp.date().year();
+    pub fn month_year(&self) -> String {
+        self.timestamp.date().strftime("%B %Y").to_string()
     }
 }
 

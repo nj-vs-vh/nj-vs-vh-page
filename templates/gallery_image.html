@@ -41,11 +41,7 @@
           <summary>extra</summary>
           <ul>
             <li>
-              <span style="display: flex; flex-direction: row; gap: 0.5rem; align-items: center;">
-                <label for="gradients-opacity">background opacity</label>
-                <input type="range" id="gradients-opacity" name="gradients" min="0" max="100" value="50"
-                  style="width: 5rem;">
-              </span>
+              <a href="full/{{ found.image.filename }}" target="_blank">hi-res</a>
             </li>
             <li>
               <div style="max-width: 700px;">
@@ -55,9 +51,15 @@
                 {% endfor %}
               </div>
             </li>
-
             <li>
-              <a href="full/{{ found.image.filename }}" target="_blank">hi-res</a>
+              <span style="display: flex; flex-direction: row; gap: 0.5rem; align-items: center;">
+                <label for="gradients-opacity">background opacity</label>
+                <input type="range" id="gradients-opacity" name="gradients" min="0" max="100" value="50"
+                  style="width: 5rem;">
+              </span>
+            </li>
+            <li>
+              <button onclick="randomizeBackgroundBlobs()" class="link-like-button">re-randomize background</button>
             </li>
           </ul>
         </details>
@@ -87,14 +89,18 @@
     if (btn !== null) btn.click();
   });
 
-  document.querySelectorAll('.blob').forEach(blob => {
-    const sizeVw = Math.round(40 + Math.random() * 40);
-    blob.style.setProperty('--size', `${sizeVw}vw`);
-    for (posProperty of ["left", "top"]) {
-      blob.style.setProperty(posProperty, `${Math.round(-sizeVw / 2 + 100 * Math.random())}%`);
-    }
-    blob.style.opacity = blobLightness(blob) * 1.0;
-  });
+  function randomizeBackgroundBlobs() {
+    document.querySelectorAll('.blob').forEach(blob => {
+      const sizeVw = Math.round(40 + Math.random() * 40);
+      blob.style.setProperty('--size', `${sizeVw}vw`);
+      for (posProperty of ["left", "top"]) {
+        blob.style.setProperty(posProperty, `${Math.round(-sizeVw / 2 + 100 * Math.random())}%`);
+      }
+      blob.style.opacity = blobLightness(blob) * 1.0;
+    });
+  }
+
+  randomizeBackgroundBlobs();
 
   function blobLightness(blobEl) {
     const color = getComputedStyle(blobEl).getPropertyValue('--color').trim().slice(1); // remove # in front

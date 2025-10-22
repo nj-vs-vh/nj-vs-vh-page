@@ -269,7 +269,7 @@ async fn music(Query(params): Query<HashMap<String, String>>) -> MusicPage {
 #[template(path = "gallery.html")]
 struct GalleryPage<'a> {
     // page: usize,  // todo: pagination
-    images_by_year: Vec<(i16, &'a [gallery::GalleryImage])>,
+    images_by_year: Vec<(String, &'a [gallery::GalleryImage])>,
 }
 
 async fn gallery_page<'a>(State(state): State<AppState>) -> Result<Response, StatusCode> {
@@ -278,8 +278,8 @@ async fn gallery_page<'a>(State(state): State<AppState>) -> Result<Response, Sta
         images_by_year: state
             .gallery
             .images
-            .chunk_by(|i1, i2| i1.year() == i2.year())
-            .map(|photos| (photos[0].year(), photos))
+            .chunk_by(|i1, i2| i1.month_year() == i2.month_year())
+            .map(|photos| (photos[0].month_year(), photos))
             .collect(),
     }
     .into_response())
