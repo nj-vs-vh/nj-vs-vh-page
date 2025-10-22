@@ -11,7 +11,7 @@ use gallery::Gallery;
 use project::{Project, ProjectTag, TagGroups};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
-use std::{collections::HashMap, env, path};
+use std::{cmp, collections::HashMap, env, path};
 use tower_http::trace::TraceLayer;
 use tower_http::{services::ServeDir, set_header::SetResponseHeader};
 use tracing::Level;
@@ -268,16 +268,28 @@ async fn music(Query(params): Query<HashMap<String, String>>) -> MusicPage {
 #[derive(Template)]
 #[template(path = "gallery.html")]
 struct GalleryPage<'a> {
-    // page: usize,  // todo: pagination
+    page: usize,
+    total_pages: usize,
     images_by_year: Vec<(String, &'a [gallery::GalleryImage])>,
 }
 
-async fn gallery_page<'a>(State(state): State<AppState>) -> Result<Response, StatusCode> {
+const GALLERY_PAGE_SIZE: usize = 30;
+
+async fn gallery_page<'a>(
+    State(state): State<AppState>,
+    Query(params): Query<HashMap<String, String>>,
+) -> Result<Response, StatusCode> {
+    let page: usize = params
+        .get("p")
+        .map_or(1, |page_str| page_str.parse().unwrap_or(1));
+    let pageidx = page.saturating_sub(1);
+
+    let start_idx = GALLERY_PAGE_SIZE * pageidx;
+    let end_idx = cmp::min(GALLERY_PAGE_SIZE * (pageidx + 1), state.gallery.size());
     Ok(GalleryPage {
-        // page: 0,
-        images_by_year: state
-            .gallery
-            .images
+        page,
+        total_pages: state.gallery.total_pages(GALLERY_PAGE_SIZE),
+        images_by_year: state.gallery.images[start_idx..end_idx]
             .chunk_by(|i1, i2| i1.month_year() == i2.month_year())
             .map(|photos| (photos[0].month_year(), photos))
             .collect(),

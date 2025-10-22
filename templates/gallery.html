@@ -28,6 +28,16 @@
     {% endfor %}
   </div>
   {% endfor %}
+  <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+    <span>page</span>
+    {% if page > 2 %} <a href="?p=1">1</a> {% endif %}
+    {% if page > 3 %} <span>...</span>{% endif %}
+    {% if page > 1 %} <a href="?p={{page - 1}}">{{page - 1}}</a> {% endif %}
+    <span style="font-weight: bold;">{{page}}</span>
+    {% if total_pages> page %} <a href="?p={{page + 1}}">{{page + 1}}</a> {% endif %}
+    {% if total_pages > page + 2 %} <span>...</span>{% endif %}
+    {% if total_pages > page + 1 %} <a href="?p={{total_pages}}">{{total_pages}}</a>{% endif %}
+  </div>
   {% include "license_footer.html" %}
 </body>
 

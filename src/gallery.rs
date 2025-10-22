@@ -242,6 +242,14 @@ impl Gallery {
                 next: self.images.get(index + 1),
             })
     }
+
+    pub fn size(&self) -> usize {
+        self.images.len()
+    }
+
+    pub fn total_pages(&self, pagesize: usize) -> usize {
+        self.size() / pagesize + usize::from(self.size() % pagesize > 0)
+    }
 }
 
 #[derive(Clone)]
