@@ -1,10 +1,13 @@
 use itertools::Itertools;
+use palette_extract::{get_palette_with_options, MaxColors, PixelEncoding, PixelFilter, Quality};
 
 #[allow(dead_code)]
+#[derive(PartialEq, Eq)]
 pub enum PaletteExtractionAlgorithm {
     MedianCut = 0,
     MeanCut = 1,
     ModeBisect = 2,
+    PaletteExtractLib = 3,
 }
 
 pub fn extract_palette(
@@ -12,6 +15,22 @@ pub fn extract_palette(
     depth: usize,
     algorithm: &PaletteExtractionAlgorithm,
 ) -> Option<Vec<[u8; 3]>> {
+    if *algorithm == PaletteExtractionAlgorithm::PaletteExtractLib {
+        let pixels_raw: Vec<u8> = values.iter().flat_map(|v| v.to_owned()).collect();
+        return Some(
+            get_palette_with_options(
+                &pixels_raw,
+                PixelEncoding::Rgb,
+                Quality::default(),
+                MaxColors::new(2_u8.pow(depth as u32)),
+                PixelFilter::None,
+            )
+            .iter()
+            .map(|c| [c.r, c.g, c.b])
+            .collect(),
+        );
+    }
+
     if values.len() == 0 {
         return None;
     }
@@ -61,6 +80,7 @@ pub fn extract_palette(
                 .0
         }
         PaletteExtractionAlgorithm::ModeBisect => {
+            // an ad-hoc algorithm to try to find the best mode bisection along the largest-range axis
             let mut left_sum: f32 = 0.0;
             let mut left_sqsum: f32 = 0.0;
             let mut left_count: f32 = 0.0;
@@ -102,6 +122,7 @@ pub fn extract_palette(
                 0
             }
         }
+        _ => return None,
     };
 
     tracing::debug!(

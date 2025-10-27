@@ -1310,6 +1310,7 @@ dependencies = [
  "jiff",
  "kamadak-exif",
  "log",
+ "palette_extract",
  "rand",
  "regex",
  "serde",
@@ -1455,6 +1456,12 @@ name = "overload"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b15813163c1d831bf4a13c3610c05c0d03b39feb07f7e09fa234dac9b15aaf39"
+
+[[package]]
+name = "palette_extract"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "37152de66c36e76d4637af2a51310ede2c0e42b80357fa517bf1b595b56489a4"
 
 [[package]]
 name = "parking_lot"

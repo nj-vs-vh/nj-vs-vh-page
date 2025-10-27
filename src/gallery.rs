@@ -114,7 +114,7 @@ impl GalleryImage {
             let colorpalette = extract_palette(
                 pixels.as_mut_slice(),
                 3,
-                &PaletteExtractionAlgorithm::ModeBisect,
+                &PaletteExtractionAlgorithm::PaletteExtractLib,
             )
             .unwrap();
             let colorpalette_codes: Vec<String> = colorpalette
