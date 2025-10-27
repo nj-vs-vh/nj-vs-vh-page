@@ -281,7 +281,7 @@ struct GalleryPage<'a> {
     images_by_year: Vec<(String, &'a [gallery::GalleryImage])>,
 }
 
-const GALLERY_PAGE_SIZE: usize = 30;
+const GALLERY_PAGE_SIZE: usize = 25;
 
 async fn gallery_page<'a>(
     State(state): State<AppState>,
