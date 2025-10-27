@@ -1,5 +1,5 @@
 use exif;
-use image::{GenericImageView, Pixel, Rgb};
+use image::{GenericImageView, Pixel};
 use jiff::civil::DateTime;
 use std::{
     cmp::Reverse,
@@ -105,9 +105,11 @@ impl GalleryImage {
                 ));
             }
 
+            let luma_min: u8 = 60;
             let mut pixels: Vec<[u8; 3]> = thumb_img
                 .pixels()
-                .map(|(_, _, color)| [color.0[0], color.0[1], color.0[2]])
+                .filter(|(_, _, rgb)| rgb.to_luma().0[0] > luma_min)
+                .map(|(_, _, rgb)| [rgb.0[0], rgb.0[1], rgb.0[2]])
                 .collect();
             let colorpalette = extract_palette(
                 pixels.as_mut_slice(),
@@ -115,16 +117,9 @@ impl GalleryImage {
                 &PaletteExtractionAlgorithm::ModeBisect,
             )
             .unwrap();
-            let lumas: Vec<u8> = colorpalette
-                .iter()
-                .map(|rgb| Rgb(rgb.to_owned()).to_luma().0[0])
-                .collect();
-            let luma_min: u8 = 60;
             let colorpalette_codes: Vec<String> = colorpalette
                 .iter()
-                .zip(lumas.iter())
-                .filter(|(_, luma)| **luma > luma_min)
-                .map(|(color, _)| color.map(|value| format!("{:02x}", value)).join(""))
+                .map(|rgb| rgb.map(|value| format!("{:02x}", value)).join(""))
                 .collect();
             tracing::info!("Extracted color palette: {}", colorpalette_codes.join(" "));
             write!(
