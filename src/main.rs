@@ -19,9 +19,9 @@ use tracing_subscriber::FmtSubscriber;
 
 use templates::ProjectHyperlink;
 
+mod colorpalette;
 mod date;
 mod gallery;
-mod median_cut;
 mod project;
 mod templates;
 
@@ -90,7 +90,15 @@ async fn main() {
     let gallery_dir_string = env::var("GALLERY_DIR").unwrap_or("gallery".to_owned());
     let gallery_dir = std::path::Path::new(&gallery_dir_string);
     tracing::info!("Serving gallery files from {:?}", &gallery_dir);
-    let gr = Gallery::load(gallery_dir, &gallery_stdmedia_dir, &gallery_thumbnails_dir);
+    let gr = Gallery::load(
+        gallery_dir,
+        &gallery_stdmedia_dir,
+        &gallery_thumbnails_dir,
+        env::var("GALLERY_IGNORE_CACHE")
+            .unwrap_or("".to_owned())
+            .len()
+            > 0,
+    );
     if let Err(e) = gr {
         tracing::error!("Failed to load gallery: {}", e);
         return;

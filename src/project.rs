@@ -1,3 +1,4 @@
+#![allow(unreachable_patterns)]
 use itertools::Itertools;
 use regex::Regex;
 use std::cmp::Reverse;

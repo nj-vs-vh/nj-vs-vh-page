@@ -9,7 +9,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::median_cut::median_cut;
+use crate::colorpalette::{extract_palette, PaletteExtractionAlgorithm};
 
 #[derive(Clone, Debug)]
 pub struct GalleryImage {
@@ -24,6 +24,7 @@ impl GalleryImage {
         filepath: &PathBuf,
         stdmedia_dir: &Path,
         thumbnails_dir: &Path,
+        ignore_cache: bool,
     ) -> io::Result<GalleryImage> {
         let filename = filepath
             .file_name()
@@ -42,7 +43,13 @@ impl GalleryImage {
         let standard_media_path = stdmedia_dir.join(&filename);
         let thumb_path = thumbnails_dir.join(&filename);
         let colorpalette_path = filepath.with_file_name(format!(".{}.colors", &filename));
-        if !standard_media_path.exists() || !thumb_path.exists() || !colorpalette_path.exists() {
+        if ignore_cache
+            || !standard_media_path.exists()
+            || !thumb_path.exists()
+            || !colorpalette_path.exists()
+        {
+            tracing::info!("Loading and processing image: {:?}", filepath);
+
             let full_img = image::open(filepath).map_err(|e| {
                 io::Error::new(
                     io::ErrorKind::Other,
@@ -102,7 +109,12 @@ impl GalleryImage {
                 .pixels()
                 .map(|(_, _, color)| [color.0[0], color.0[1], color.0[2]])
                 .collect();
-            let colorpalette = median_cut(pixels.as_mut_slice(), 3).unwrap();
+            let colorpalette = extract_palette(
+                pixels.as_mut_slice(),
+                3,
+                &PaletteExtractionAlgorithm::ModeBisect,
+            )
+            .unwrap();
             let lumas: Vec<u8> = colorpalette
                 .iter()
                 .map(|rgb| Rgb(rgb.to_owned()).to_luma().0[0])
@@ -114,6 +126,7 @@ impl GalleryImage {
                 .filter(|(_, luma)| **luma > luma_min)
                 .map(|(color, _)| color.map(|value| format!("{:02x}", value)).join(""))
                 .collect();
+            tracing::info!("Extracted color palette: {}", colorpalette_codes.join(" "));
             write!(
                 File::create(&colorpalette_path)?,
                 "{}",
@@ -192,7 +205,12 @@ impl Display for Gallery {
 }
 
 impl Gallery {
-    pub fn load(src_dir: &Path, stdmedia_dir: &Path, thumbnails_dir: &Path) -> io::Result<Gallery> {
+    pub fn load(
+        src_dir: &Path,
+        stdmedia_dir: &Path,
+        thumbnails_dir: &Path,
+        ignore_cache: bool,
+    ) -> io::Result<Gallery> {
         tracing::info!("Loading gallery from {:?}", src_dir);
         if !src_dir.is_dir() {
             return Err(io::Error::other(
@@ -207,7 +225,12 @@ impl Gallery {
                         return None;
                     }
 
-                    match GalleryImage::load(&entry.path(), stdmedia_dir, thumbnails_dir) {
+                    match GalleryImage::load(
+                        &entry.path(),
+                        stdmedia_dir,
+                        thumbnails_dir,
+                        ignore_cache,
+                    ) {
                         Ok(image) => Some(image),
                         Err(e) => {
                             tracing::warn!("Failed to load gallery image from {:?}: {}", entry, e);
