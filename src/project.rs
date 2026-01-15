@@ -1,6 +1,6 @@
 #![allow(unreachable_patterns)]
+use fancy_regex::Regex;
 use itertools::Itertools;
-use regex::Regex;
 use std::cmp::Reverse;
 use std::{fs::File, io, path::Path};
 
@@ -116,15 +116,17 @@ impl Project {
         // preprocessing Markdown: insert nicer typography
         // body_md = body_md.replace("---", "—");
         let mut options = comrak::Options::default();
-        options.render.unsafe_ = true;
+        options.render.r#unsafe = true;
         options.parse.smart = true;
         options.extension.strikethrough = true;
+        options.extension.footnotes = true;
+        options.extension.inline_footnotes = true;
         let mut body_html = comrak::markdown_to_html(&body_md, &options);
-        // posprocessing HTML (trivially, so only regex)
-        // make all anchors target a blank page
-        let anchor_re = Regex::new(r"<a\s+href").unwrap();
+        // posprocessing HTML with regex, yes I know I know
+        // make all anchors target a blank page, except those linking to hash on the current page (e.g. footnotes)
+        let anchor_re = Regex::new("<a\\s+href=\"(?!#)").unwrap();
         body_html = anchor_re
-            .replace_all(&body_html, "<a target=\"_blank\" href")
+            .replace_all(&body_html, "<a target=\"_blank\" href=\"")
             .to_string();
 
         // copying media to a dedicated dir
