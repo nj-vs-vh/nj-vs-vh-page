@@ -1,0 +1,16 @@
+title: funbin & accompanying April Fools paper
+start:
+  year: 2026
+  month: 4
+slug: funbin
+github: https://github.com/nj-vs-vh/funbin
+links:
+  - name: paper on arXiv
+    url: https://arxiv.org/abs/2603.30006
+math: false
+tags:
+  - code:python
+  - platform:library
+  - platform:paper
+  - topic:visualization
+  - topic:science
