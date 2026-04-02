@@ -185,7 +185,7 @@ async fn index<'a>(State(state): State<AppState>) -> Response {
         selected_project_hyperlinks: state
             .project_catalog
             .projects
-            .choose_multiple(&mut rng, 5)
+            .choose_multiple(&mut rng, 3)
             .map(|p| ProjectHyperlink { p })
             .collect(),
     }

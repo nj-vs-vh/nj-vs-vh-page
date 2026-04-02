@@ -30,36 +30,36 @@
     <li>occasionally i take <a href="/gallery">photos</a></li>
   </ul>
   </p>
-  <h3>my projects</h3>
+  <h3>projects</h3>
+  <p>
+    brief documentation of the stuff i do. see full <a href="/projects">list</a>, browse <a href="/tags">tags</a>, or
+    enjoy a few random ones:
+  </p>
+  </ul>
   <ul>
     {% for ph in selected_project_hyperlinks %}
     <li>{{ ph|safe }}</li>
     {% endfor %}
-    <li class="see-more">
-      <a href="/projects">...see all projects</a> or
-      <a href="/tags">browse tags</a>
-    </li>
-  </ul>
-  <h3>find me elsewhere</h3>
-  <ul>
-    <li>
-      i track code on
-      <a href="https://github.com/nj-vs-vh" target="_blank">github</a>
-    </li>
-    <li>
-      details of my commercial and academic experience are on
-      <a href="https://www.linkedin.com/in/igor-vaiman-110ba21a9/" target="_blank">linkedin</a>
-    </li>
-    <li>
-      some of my sound-related work is available on
-      <a href="https://soundcloud.com/nj_vs_valhalla" target="_blank">soundcloud</a>
-    </li>
-    <li>
-      get in touch by
-      <a href="mailto:gosha.vaiman@gmail.com" target="_blank">emailing me to gosha.vaiman@gmail.com</a>
-    </li>
-  </ul>
-  {% include "license_footer.html" %}
+    <h3>find me elsewhere</h3>
+    <ul>
+      <li>
+        i track code on
+        <a href="https://github.com/nj-vs-vh" target="_blank">github</a>
+      </li>
+      <li>
+        details of my commercial and academic experience are on
+        <a href="https://www.linkedin.com/in/igor-vaiman-110ba21a9/" target="_blank">linkedin</a>
+      </li>
+      <li>
+        some of my sound-related work is available on
+        <a href="https://soundcloud.com/nj_vs_valhalla" target="_blank">soundcloud</a>
+      </li>
+      <li>
+        get in touch by
+        <a href="mailto:gosha.vaiman@gmail.com" target="_blank">emailing me to gosha.vaiman@gmail.com</a>
+      </li>
+    </ul>
+    {% include "license_footer.html" %}
 </body>
 
 </html>
