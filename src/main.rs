@@ -106,6 +106,10 @@ async fn main() {
     let gallery = gr.unwrap();
     tracing::info!("Loaded gallery: {}", &gallery);
 
+    let audio_dir_string = env::var("AUDIO_DIR").unwrap_or("audio".to_owned());
+    let audio_dir = std::path::Path::new(&audio_dir_string);
+    tracing::info!("Serving audio files from {:?}", &gallery_dir);
+
     let static_content_cache = if !is_dev { "max-age=300" } else { "no-cache" };
     let app = Router::new()
         .route("/", get(index))
@@ -153,6 +157,14 @@ async fn main() {
             "/projects/media",
             SetResponseHeader::if_not_present(
                 ServeDir::new(project_media_dir),
+                header::CACHE_CONTROL,
+                header::HeaderValue::from_static(&static_content_cache),
+            ),
+        )
+        .nest_service(
+            "/audio",
+            SetResponseHeader::if_not_present(
+                ServeDir::new(audio_dir),
                 header::CACHE_CONTROL,
                 header::HeaderValue::from_static(&static_content_cache),
             ),
@@ -261,16 +273,10 @@ async fn tag_list(State(state): State<AppState>) -> Result<Response, StatusCode>
 
 #[derive(Template)]
 #[template(path = "music.html")]
-struct MusicPage {
-    pub embeds: bool,
-}
+struct MusicPage {}
 
-async fn music(Query(params): Query<HashMap<String, String>>) -> MusicPage {
-    MusicPage {
-        embeds: params
-            .get("embeds")
-            .map_or(true, |v| v.to_lowercase() != "false"),
-    }
+async fn music() -> MusicPage {
+    MusicPage {}
 }
 
 #[derive(Template)]
