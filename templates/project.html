@@ -4,6 +4,8 @@
 <head>
   {% include "head_preamble.html" %}
   <title>{{ project.metadata.title }} | nj-vs-vh</title>
+  <meta name="description" content="{{ project.metadata.title }}">
+
   <!-- highligh.js setup -->
   {% if project.metadata.code_languages.len() > 0 %}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -15,6 +17,34 @@
   <!-- mathjax setup -->
   {% if project.metadata.math %} {% include "mathjax_setup.html" %} {% endif
   %}
+
+  <style>
+    .project-body>p {
+      text-align: justify;
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .group {
+      display: flex;
+      flex-direction: row;
+      gap: 1.5rem;
+      align-items: baseline;
+    }
+
+    .tag-footer {
+      font-size: smaller;
+      padding-top: 1em;
+      margin-top: 1em;
+      border-top: 0.7px var(--light-gray) solid;
+    }
+  </style>
+
+
 </head>
 {% if project.metadata.code_languages.len() > 0 %}
 <script>
@@ -47,31 +77,5 @@
   </div>
   {% endif %} {% include "license_footer.html" %}
 </body>
-
-<style>
-  .project-body>p {
-    text-align: justify;
-  }
-
-  .stack {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-
-  .group {
-    display: flex;
-    flex-direction: row;
-    gap: 1.5rem;
-    align-items: baseline;
-  }
-
-  .tag-footer {
-    font-size: smaller;
-    padding-top: 1em;
-    margin-top: 1em;
-    border-top: 0.7px var(--light-gray) solid;
-  }
-</style>
 
 </html>

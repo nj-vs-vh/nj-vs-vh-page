@@ -4,6 +4,37 @@
 <head>
   {% include "head_preamble.html" %}
   <title>music | nj-vs-vh</title>
+  <meta name="description" content="Music projects on Igor Vaiman's personal website">
+  <style>
+    section {
+      border-top: 1px gray solid;
+      margin-top: 1.5em;
+    }
+
+    h3 {
+      margin-top: 0.5em;
+    }
+
+    audio {
+      width: 100%;
+    }
+
+    [role="doc-subtitle"] {
+      font-size: small;
+      font-weight: 400;
+      margin-top: 0.5em;
+    }
+
+    #collapsible-content {
+      display: none;
+    }
+
+    #toggle:checked+#collapsible-content {
+      display: block;
+    }
+  </style>
+
+
 </head>
 
 <body>
@@ -319,34 +350,5 @@
 
   {% include "license_footer.html" %}
 </body>
-
-<style>
-  section {
-    border-top: 1px gray solid;
-    margin-top: 1.5em;
-  }
-
-  h3 {
-    margin-top: 0.5em;
-  }
-
-  audio {
-    width: 100%;
-  }
-
-  [role="doc-subtitle"] {
-    font-size: small;
-    font-weight: 400;
-    margin-top: 0.5em;
-  }
-
-  #collapsible-content {
-    display: none;
-  }
-
-  #toggle:checked+#collapsible-content {
-    display: block;
-  }
-</style>
 
 </html>

@@ -4,7 +4,57 @@
 <head>
   {% include "head_preamble.html" %}
   <title>{{ found.image.filename }} | nj-vs-vh page</title>
-  <meta name="description" content="Gallery" />
+  <meta name="description" content="{{found.image.filename}} in the gallery on Igor Vaiman's personal website">
+  <style>
+    body {
+      width: 95vw;
+    }
+
+    .main-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    img#photo {
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+      max-height: 75vh;
+      box-shadow: 0 0 120px white;
+    }
+
+    header {
+      width: var(--main-column-width);
+      z-index: 10;
+    }
+
+    .settings-footer {
+      font-size: smaller;
+      padding-top: 1em;
+      margin-top: 1em;
+      border-top: 0.7px var(--light-gray) solid;
+    }
+
+    /* background blobs */
+
+    #blobs-container {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: -1;
+      background: white;
+      opacity: 0;
+    }
+
+    .blob {
+      position: absolute;
+      width: var(--size, 400px);
+      height: var(--size, 400px);
+      background: radial-gradient(circle at center, var(--color) 0%, transparent 100%);
+      filter: blur(100px);
+      mix-blend-mode: multiply;
+    }
+  </style>
 </head>
 
 <body>
@@ -124,55 +174,5 @@
   })
 </script>
 
-<style>
-  body {
-    width: 95vw;
-  }
-
-  .main-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  img#photo {
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-    max-height: 75vh;
-    box-shadow: 0 0 120px white;
-  }
-
-  header {
-    width: var(--main-column-width);
-    z-index: 10;
-  }
-
-  .settings-footer {
-    font-size: smaller;
-    padding-top: 1em;
-    margin-top: 1em;
-    border-top: 0.7px var(--light-gray) solid;
-  }
-
-  /* background blobs */
-
-  #blobs-container {
-    position: fixed;
-    inset: 0;
-    overflow: hidden;
-    z-index: -1;
-    background: white;
-    opacity: 0;
-  }
-
-  .blob {
-    position: absolute;
-    width: var(--size, 400px);
-    height: var(--size, 400px);
-    background: radial-gradient(circle at center, var(--color) 0%, transparent 100%);
-    filter: blur(100px);
-    mix-blend-mode: multiply;
-  }
-</style>
 
 </html>

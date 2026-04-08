@@ -4,6 +4,12 @@
 <head>
   {% include "head_preamble.html" %}
   <title>nj-vs-vh page</title>
+  <meta name="description" content="Igor Vaiman's personal website">
+  <style>
+    h2 {
+      font-size: 1.17em;
+    }
+  </style>
 </head>
 
 <body>
@@ -28,7 +34,7 @@
     <li>i play and produce <a href="/music">music</a></li>
     <li>occasionally i take <a href="/gallery">photos</a></li>
   </ul>
-  <h3>projects</h3>
+  <h2>projects</h2>
   <p>
     brief documentation of the stuff i do. here's a few random ones:
   </p>
@@ -38,7 +44,7 @@
     {% endfor %}
   </ul>
   <p>see full <a href="/projects">list</a> or browse <a href="/tags">tags</a></p>
-  <h3>find me elsewhere</h3>
+  <h2>find me elsewhere</h2>
   <ul>
     <li>
       i track code on
@@ -59,37 +65,5 @@
   </ul>
   {% include "license_footer.html" %}
 </body>
-
-<style>
-  li.see-more::marker {
-    color: transparent;
-  }
-
-  .arrow {
-    min-width: 50px;
-    flex-grow: 4;
-    --tail-width: 4px;
-    --head-width: 8px;
-    --head-length: 20px;
-    --arrow-color: var(--light-gray);
-  }
-
-  .line {
-    margin-top: calc(var(--head-width) - var(--tail-width) / 2);
-    width: calc(100% - var(--head-length));
-    background: var(--arrow-color);
-    height: var(--tail-width);
-    float: left;
-  }
-
-  .point {
-    width: 0;
-    height: 0;
-    border-top: var(--head-width) solid transparent;
-    border-bottom: var(--head-width) solid transparent;
-    border-left: var(--head-length) solid var(--arrow-color);
-    float: right;
-  }
-</style>
 
 </html>

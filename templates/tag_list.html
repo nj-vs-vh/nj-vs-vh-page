@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    {% include "head_preamble.html" %}
-    <title>project tags | nj-vs-vh</title>
-  </head>
-  <body>
-    <header><a href="/">home</a> /</header>
-    <h1>tags</h1>
-    {% for (category, tags) in tag_groups %}
-    <h2>{{category}}</h2>
-    {% for tag in tags %}
-    <a href="/projects?tag={{tag}}" title="list projects tagged with {{tag}}"
-      >{{ tag.name }}</a
-    >
-    {% endfor %}
-    <!--  -->
-    {% endfor %}
-    <!--  -->
-    {% include "license_footer.html" %}
-  </body>
+
+<head>
+  {% include "head_preamble.html" %}
+  <title>project tags | nj-vs-vh</title>
+  <meta name="description" content="Project tags on Igor Vaiman's personal website">
+</head>
+
+<body>
+  <header><a href="/">home</a> /</header>
+  <h1>tags</h1>
+  {% for (category, tags) in tag_groups %}
+  <h2>{{category}}</h2>
+  {% for tag in tags %}
+  <a href="/projects?tag={{tag}}" title="list projects tagged with {{tag}}">{{ tag.name }}</a>
+  {% endfor %}
+  <!--  -->
+  {% endfor %}
+  <!--  -->
+  {% include "license_footer.html" %}
+</body>
+
 </html>
