@@ -4,7 +4,6 @@
 <head>
   {% include "head_preamble.html" %}
   <title>nj-vs-vh page</title>
-  <meta name="description" content="Igor Vaiman's personal website, portfolio, project collection and playground" />
 </head>
 
 <body>
@@ -29,12 +28,10 @@
     <li>i play and produce <a href="/music">music</a></li>
     <li>occasionally i take <a href="/gallery">photos</a></li>
   </ul>
-  </p>
   <h3>projects</h3>
   <p>
     brief documentation of the stuff i do. here's a few random ones:
   </p>
-  </ul>
   <ul>
     {% for ph in selected_project_hyperlinks %}
     <li>{{ ph|safe }}</li>
@@ -63,7 +60,6 @@
   {% include "license_footer.html" %}
 </body>
 
-</html>
 <style>
   li.see-more::marker {
     color: transparent;
@@ -95,3 +91,5 @@
     float: right;
   }
 </style>
+
+</html>
