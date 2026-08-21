@@ -31,12 +31,33 @@
         max-width: 100%;
       }
     }
+
+    .unlisted-warning {
+      border-left: 2px solid #858585;
+      padding-left: 1rem;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+      font-style: italic;
+      color: #333333;
+    }
   </style>
 
 
 </head>
 
 <body>
+  {% match album_meta %} {% when Some with (am) %}
+  <header><a href="/">home</a> / <a href="/gallery">gallery</a></header>
+  <h1>{{ am.title }}</h1>
+  {% if !am.listed %}
+  <div class="unlisted-warning">
+    this album is unlisted, accessible only through the <a id="album-link" href="/gallery/{{ am.slug }}">direct link</a>
+  </div>
+  {% endif %}
+  <p>
+    {{ am.description }}
+  </p>
+  {% when None %}
   <header><a href="/">home</a> /</header>
   <h1>photo gallery</h1>
   <p>
@@ -47,12 +68,13 @@
     more casual phone shoots are on my
     <a href="https://www.instagram.com/nj_vs_valhalla/" target="_blank">instagram</a>.
   </p>
+  {% endmatch %}
   {% for year_images in images_by_year %}
   <h3>{{year_images.0}}</h3>
   <div class="gallery-container">
     {% for image in year_images.1 %}
-    <a class="photo-container" href="gallery/{{ image.filename }}">
-      <img class="photo" src="gallery/thumbnails/{{ image.filename }}" />
+    <a class="photo-container" href="/gallery/{{self.album_slug()}}/{{ image.filename }}">
+      <img class="photo" src="/gallery/thumbnails/{{ image.filename }}" />
     </a>
     {% endfor %}
   </div>

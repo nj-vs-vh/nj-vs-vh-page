@@ -1,15 +1,27 @@
 use exif;
 use image::{GenericImageView, Pixel};
 use jiff::civil::DateTime;
+use serde::Deserialize;
+use sha2::{Digest, Sha256};
 use std::{
     cmp::Reverse,
+    collections::HashMap,
     fmt::Display,
     fs::File,
     io::{self, Read, Write},
+    os::unix::fs,
     path::{Path, PathBuf},
 };
 
 use crate::colorpalette::{extract_palette, PaletteExtractionAlgorithm};
+
+pub struct GalleryConfig<'a> {
+    pub stdmedia_dir: &'a Path,
+    pub thumbnails_dir: &'a Path,
+    pub fulls_dir: &'a Path,
+    pub ignore_cache: bool,
+    pub unlisted_filenames_pepper: &'a str,
+}
 
 #[derive(Clone, Debug)]
 pub struct GalleryImage {
@@ -22,11 +34,10 @@ pub struct GalleryImage {
 impl GalleryImage {
     pub fn load(
         filepath: &PathBuf,
-        stdmedia_dir: &Path,
-        thumbnails_dir: &Path,
-        ignore_cache: bool,
+        config: &GalleryConfig,
+        anonymize: bool,
     ) -> io::Result<GalleryImage> {
-        let filename = filepath
+        let mut filename = filepath
             .file_name()
             .ok_or(io::Error::new(
                 io::ErrorKind::Other,
@@ -38,12 +49,22 @@ impl GalleryImage {
                 "Filename contains non-unicode characters",
             ))?
             .to_owned();
+        let original_filename = filename.clone();
+        if anonymize {
+            let mut hasher = Sha256::new();
+            hasher.update(filename);
+            hasher.update(config.unlisted_filenames_pepper);
+            filename = hex::encode(hasher.finalize()).chars().take(10).collect();
+            if let Some(extension) = filepath.extension() {
+                filename = [filename, extension.to_string_lossy().to_string()].join(".");
+            }
+        }
 
         // reading image contents and generating thumbnail
-        let standard_media_path = stdmedia_dir.join(&filename);
-        let thumb_path = thumbnails_dir.join(&filename);
-        let colorpalette_path = filepath.with_file_name(format!(".{}.colors", &filename));
-        if ignore_cache
+        let standard_media_path = config.stdmedia_dir.join(&filename);
+        let thumb_path = config.thumbnails_dir.join(&filename);
+        let colorpalette_path = filepath.with_file_name(format!(".{}.colors", &original_filename)); // for human-readable color pallettes
+        if config.ignore_cache
             || !standard_media_path.exists()
             || !thumb_path.exists()
             || !colorpalette_path.exists()
@@ -129,6 +150,11 @@ impl GalleryImage {
             )?;
         };
 
+        let full_path = config.fulls_dir.join(&filename);
+        if !full_path.exists() {
+            fs::symlink(filepath.canonicalize()?, full_path)?;
+        }
+
         let mut contents = String::new();
         File::open(&colorpalette_path)?.read_to_string(&mut contents)?;
         let colorpalette: Vec<String> = contents
@@ -195,17 +221,14 @@ pub struct Gallery {
 
 impl Display for Gallery {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&format!("Gallery {{ {} images }}", self.images.len(),))
+        f.write_str(&format!("<{} images>", self.images.len(),))
     }
 }
 
+const ALBUM_YAML: &str = "album.yaml";
+
 impl Gallery {
-    pub fn load(
-        src_dir: &Path,
-        stdmedia_dir: &Path,
-        thumbnails_dir: &Path,
-        ignore_cache: bool,
-    ) -> io::Result<Gallery> {
+    pub fn load(src_dir: &Path, config: &GalleryConfig, is_listed: bool) -> io::Result<Gallery> {
         tracing::info!("Loading gallery from {:?}", src_dir);
         if !src_dir.is_dir() {
             return Err(io::Error::other(
@@ -216,16 +239,16 @@ impl Gallery {
             .read_dir()?
             .filter_map(|maybe_dir_entry| match maybe_dir_entry {
                 Ok(entry) => {
-                    if entry.file_name().to_string_lossy().chars().next() == Some('.') {
+                    if entry.path().is_dir() {
+                        return None;
+                    }
+                    let _fname = entry.file_name();
+                    let name = _fname.to_string_lossy();
+                    if name == ALBUM_YAML || name.chars().next() == Some('.') {
                         return None;
                     }
 
-                    match GalleryImage::load(
-                        &entry.path(),
-                        stdmedia_dir,
-                        thumbnails_dir,
-                        ignore_cache,
-                    ) {
+                    match GalleryImage::load(&entry.path(), config, !is_listed) {
                         Ok(image) => Some(image),
                         Err(e) => {
                             tracing::warn!("Failed to load gallery image from {:?}: {}", entry, e);
@@ -275,4 +298,101 @@ pub struct FoundGalleryImage<'a> {
     pub image: &'a GalleryImage,
     pub prev: Option<&'a GalleryImage>,
     pub next: Option<&'a GalleryImage>,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct AlbumMetadata {
+    pub title: String,
+    pub description: String,
+    pub slug: String,
+    pub listed: bool,
+}
+
+#[derive(Clone, Debug)]
+pub struct Album {
+    pub gallery: Gallery,
+    pub meta: AlbumMetadata,
+}
+
+impl Display for Album {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&format!("'{}' ({})", self.meta.title, self.gallery))
+    }
+}
+
+impl Album {
+    pub fn load(dir: &Path, config: &GalleryConfig) -> io::Result<Album> {
+        tracing::info!("Loading album from {:?}", dir);
+        let meta: AlbumMetadata = serde_yaml::from_reader(File::open(dir.join(ALBUM_YAML))?)
+            .map_err(|e| {
+                io::Error::other(format!("Error loading album metadata: {}", e.to_string()))
+            })?;
+        Ok(Album {
+            gallery: Gallery::load(dir, config, meta.listed)?,
+            meta,
+        })
+    }
+
+    #[allow(dead_code)]
+    pub fn timestamp(&self) -> Option<DateTime> {
+        self.gallery.images.iter().map(|img| img.timestamp).max()
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct TopGallery {
+    pub root: Gallery,
+    pub albums: HashMap<String, Album>,
+}
+
+impl Display for TopGallery {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&format!("Main gallery: {}, albums: ", self.root))?;
+        for (i, a) in self.albums.values().enumerate() {
+            a.fmt(f)?;
+            if i < self.albums.len() - 1 {
+                f.write_str(", ")?;
+            }
+        }
+        Ok(())
+    }
+}
+
+impl TopGallery {
+    pub fn load(dir: &Path, config: &GalleryConfig) -> io::Result<TopGallery> {
+        tracing::info!("Loading top-level gallery from {:?}", dir);
+
+        Ok(TopGallery {
+            root: Gallery::load(dir, config, true)?,
+            albums: dir
+                .read_dir()?
+                .filter_map(|maybe_dir_entry| match maybe_dir_entry {
+                    Ok(entry) => {
+                        let path = entry.path();
+                        if path.is_dir() {
+                            match Album::load(&path, config) {
+                                Ok(a) => Some((a.meta.slug.clone(), a)),
+                                Err(e) => {
+                                    tracing::warn!(
+                                        "Failed to load gallery image from {:?}: {}",
+                                        entry,
+                                        e
+                                    );
+                                    None
+                                }
+                            }
+                        } else {
+                            None
+                        }
+                    }
+                    Err(e) => {
+                        tracing::warn!("Not a valid dir entry: {}", e);
+                        None
+                    }
+                })
+                .collect(),
+        })
+    }
+
+    // pub fn find_album(&self, slug: &str) -> Option<&Album> {}
 }

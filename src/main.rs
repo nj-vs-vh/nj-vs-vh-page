@@ -7,7 +7,6 @@ use axum::{
     routing::get,
     Router,
 };
-use gallery::Gallery;
 use project::{Project, ProjectTag, TagGroups};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
@@ -19,6 +18,8 @@ use tracing_subscriber::FmtSubscriber;
 
 use templates::ProjectHyperlink;
 
+use crate::gallery::{AlbumMetadata, Gallery, GalleryConfig, TopGallery};
+
 mod colorpalette;
 mod date;
 mod gallery;
@@ -28,7 +29,7 @@ mod templates;
 #[derive(Clone)]
 struct AppState {
     project_catalog: project::ProjectCatalog,
-    gallery: gallery::Gallery,
+    gallery: gallery::TopGallery,
 }
 
 #[tokio::main]
@@ -76,6 +77,15 @@ async fn main() {
         );
         return;
     };
+    let gallery_fulls_dir = static_dir.join("gallery-full");
+    if let Err(e) = std::fs::create_dir_all(&gallery_fulls_dir) {
+        tracing::error!(
+            "Error creating gallery fullres dir {:?}: {}",
+            &gallery_fulls_dir,
+            e
+        );
+        return;
+    };
 
     let projects_dir = env::var("PROJECTS_DIR").unwrap_or("projects".to_owned());
     let catalog_res =
@@ -90,14 +100,19 @@ async fn main() {
     let gallery_dir_string = env::var("GALLERY_DIR").unwrap_or("gallery".to_owned());
     let gallery_dir = std::path::Path::new(&gallery_dir_string);
     tracing::info!("Serving gallery files from {:?}", &gallery_dir);
-    let gr = Gallery::load(
+    let gr = TopGallery::load(
         gallery_dir,
-        &gallery_stdmedia_dir,
-        &gallery_thumbnails_dir,
-        env::var("GALLERY_IGNORE_CACHE")
-            .unwrap_or("".to_owned())
-            .len()
-            > 0,
+        &GalleryConfig {
+            stdmedia_dir: &gallery_stdmedia_dir,
+            thumbnails_dir: &gallery_thumbnails_dir,
+            fulls_dir: &gallery_fulls_dir,
+            ignore_cache: env::var("GALLERY_IGNORE_CACHE")
+                .unwrap_or("".to_owned())
+                .len()
+                > 0,
+            unlisted_filenames_pepper: &env::var("GALLERY_UNLISTED_FILENAMES_PEPPER")
+                .unwrap_or("".to_owned()),
+        },
     );
     if let Err(e) = gr {
         tracing::error!("Failed to load gallery: {}", e);
@@ -119,8 +134,9 @@ async fn main() {
         .route("/tags/", get(tag_list))
         .route("/tags", get(tag_list))
         .route("/music", get(music))
-        .route("/gallery", get(gallery_page))
-        .route("/gallery/:slug", get(gallery_image))
+        .route("/gallery", get(main_gallery_page))
+        .route("/gallery/:album_slu", get(album_gallery_page))
+        .route("/gallery/:album_slug/:image_slug", get(gallery_image))
         .nest_service(
             "/static",
             SetResponseHeader::if_not_present(
@@ -132,7 +148,7 @@ async fn main() {
         .nest_service(
             "/gallery/full",
             SetResponseHeader::if_not_present(
-                ServeDir::new(gallery_dir),
+                ServeDir::new(gallery_fulls_dir),
                 header::CACHE_CONTROL,
                 header::HeaderValue::from_static(&static_content_cache),
             ),
@@ -282,28 +298,39 @@ async fn music() -> MusicPage {
 #[derive(Template)]
 #[template(path = "gallery.html")]
 struct GalleryPage<'a> {
+    album_meta: Option<&'a AlbumMetadata>,
     page: usize,
     total_pages: usize,
     images_by_year: Vec<(String, &'a [gallery::GalleryImage])>,
 }
 
+const ROOT_ALBUM: &str = "root";
+
+impl<'a> GalleryPage<'a> {
+    pub fn album_slug(&'a self) -> &'a str {
+        match self.album_meta.as_ref() {
+            None => ROOT_ALBUM,
+            Some(am) => &am.slug,
+        }
+    }
+}
+
 const GALLERY_PAGE_SIZE: usize = 25;
 
-async fn gallery_page<'a>(
-    State(state): State<AppState>,
-    Query(params): Query<HashMap<String, String>>,
+async fn _render_gallery<'a>(
+    gallery: &Gallery,
+    album_meta: Option<&AlbumMetadata>,
+    page: usize,
 ) -> Result<Response, StatusCode> {
-    let page: usize = params
-        .get("p")
-        .map_or(1, |page_str| page_str.parse().unwrap_or(1));
     let pageidx = page.saturating_sub(1);
 
     let start_idx = GALLERY_PAGE_SIZE * pageidx;
-    let end_idx = cmp::min(GALLERY_PAGE_SIZE * (pageidx + 1), state.gallery.size());
+    let end_idx = cmp::min(GALLERY_PAGE_SIZE * (pageidx + 1), gallery.size());
     Ok(GalleryPage {
+        album_meta,
         page,
-        total_pages: state.gallery.total_pages(GALLERY_PAGE_SIZE),
-        images_by_year: state.gallery.images[start_idx..end_idx]
+        total_pages: gallery.total_pages(GALLERY_PAGE_SIZE),
+        images_by_year: gallery.images[start_idx..end_idx]
             .chunk_by(|i1, i2| i1.month_year() == i2.month_year())
             .map(|photos| (photos[0].month_year(), photos))
             .collect(),
@@ -311,18 +338,69 @@ async fn gallery_page<'a>(
     .into_response())
 }
 
+fn _parse_page(params: &HashMap<String, String>) -> usize {
+    params
+        .get("p")
+        .map_or(1, |page_str| page_str.parse().unwrap_or(1))
+}
+
+async fn main_gallery_page<'a>(
+    State(state): State<AppState>,
+    Query(params): Query<HashMap<String, String>>,
+) -> Result<Response, StatusCode> {
+    _render_gallery(&state.gallery.root, None, _parse_page(&params)).await
+}
+
+async fn album_gallery_page<'a>(
+    State(state): State<AppState>,
+    Path(album_slug): Path<String>,
+    Query(params): Query<HashMap<String, String>>,
+) -> Result<Response, StatusCode> {
+    let album = match state.gallery.albums.get(&album_slug) {
+        Some(a) => a,
+        None => {
+            return Err(StatusCode::NOT_FOUND);
+        }
+    };
+    _render_gallery(&album.gallery, Some(&album.meta), _parse_page(&params)).await
+}
+
 #[derive(Template)]
 #[template(path = "gallery_image.html")]
 struct GalleryImagePage<'a> {
+    album_meta: Option<&'a AlbumMetadata>,
     found: gallery::FoundGalleryImage<'a>,
 }
 
 async fn gallery_image<'a>(
     State(state): State<AppState>,
-    Path(slug): Path<String>,
+    Path((album_slug, image_slug)): Path<(String, String)>,
 ) -> Result<Response, StatusCode> {
-    if let Some(image) = state.gallery.find(&slug) {
-        Ok(GalleryImagePage { found: image }.into_response())
+    let gallery: &Gallery;
+    let album_meta: Option<&AlbumMetadata>;
+
+    match album_slug.as_str() {
+        ROOT_ALBUM => {
+            gallery = &state.gallery.root;
+            album_meta = None;
+        }
+        other => match state.gallery.albums.get(other) {
+            Some(a) => {
+                gallery = &a.gallery;
+                album_meta = Some(&a.meta);
+            }
+            None => {
+                return Err(StatusCode::NOT_FOUND);
+            }
+        },
+    };
+
+    if let Some(image) = gallery.find(&image_slug) {
+        Ok(GalleryImagePage {
+            album_meta,
+            found: image,
+        }
+        .into_response())
     } else {
         Err(StatusCode::NOT_FOUND)
     }

@@ -60,6 +60,10 @@
 <body>
   <div class="main-column">
     <header><a href="/">home</a> / <a href="/gallery">gallery</a> /
+      {% if let Some(album_meta) = album_meta %}
+      <a href="/gallery/{{ album_meta.slug }}">{{ album_meta.title }}</a> /
+      {% endif %}
+      <!--  -->
       {% if let Some(prev) = found.prev %}
       <a id="goto-prev" href="{{prev.filename}}">&lt;</a>
       {% else %}
@@ -75,7 +79,7 @@
       {% endif %}
     </header>
     <main style="display: flex; flex-direction: column; align-items: center;">
-      <img id="photo" src="media/{{ found.image.filename }}" />
+      <img id="photo" src="/gallery/media/{{ found.image.filename }}" />
       <div style="min-width: var(--main-column-width); width: 100%;">
         <div style="display: flex; justify-content: space-between; gap: 3rem;">
           {% match found.image.title %}
@@ -91,7 +95,7 @@
           <summary>extra</summary>
           <ul>
             <li>
-              <a href="full/{{ found.image.filename }}" target="_blank">hi-res</a>
+              <a href="/gallery/full/{{ found.image.filename }}" target="_blank">hi-res</a>
             </li>
             <li>
               <div style="max-width: 700px;">
