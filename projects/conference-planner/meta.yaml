@@ -1,0 +1,11 @@
+title: confplan, a parallel session picking tool
+start:
+  year: 2025
+  month: 7
+slug: confplan
+github: https://github.com/nj-vs-vh/confplan
+math: true
+tags:
+  - code:python
+  - topic:science
+  - platform:terminal

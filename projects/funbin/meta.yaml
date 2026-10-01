@@ -11,6 +11,6 @@ math: false
 tags:
   - code:python
   - platform:library
-  - platform:paper
+  - platform:text
   - topic:visualization
   - topic:science
