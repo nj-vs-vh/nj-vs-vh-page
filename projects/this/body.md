@@ -15,7 +15,7 @@ minimalistic, hacky, wonderful blogs and personal pages.
           print(f"hello, {name}")
     ```
   - latex-style math with [MathJax](https://www.mathjax.org/):
-  $\displaystyle \int_{-\infty}^{\infty} e^{x^2} dx$
+  $\displaystyle \int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}$
   - per-project media files:
   ![photo example](media/photo-example.jpg)
 - projects have a [tag system](/tags) with a simplistic faceted classification
