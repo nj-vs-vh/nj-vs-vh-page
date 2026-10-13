@@ -49,7 +49,6 @@ impl GalleryImage {
                 "Filename contains non-unicode characters",
             ))?
             .to_owned();
-        let original_filename = filename.clone();
         if anonymize {
             let mut hasher = Sha256::new();
             hasher.update(filename);
