@@ -63,7 +63,7 @@ impl GalleryImage {
         // reading image contents and generating thumbnail
         let standard_media_path = config.stdmedia_dir.join(&filename);
         let thumb_path = config.thumbnails_dir.join(&filename);
-        let colorpalette_path = filepath.with_file_name(format!(".{}.colors", &original_filename)); // for human-readable color pallettes
+        let colorpalette_path = thumb_path.with_extension(".colors");
         if config.ignore_cache
             || !standard_media_path.exists()
             || !thumb_path.exists()
