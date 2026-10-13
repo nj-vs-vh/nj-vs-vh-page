@@ -5,8 +5,8 @@ start:
 slug: citezen
 github: https://github.com/nj-vs-vh/citezen
 links:
-  - name: use
-    url: https://citezen.nj-vs-vh.com
+  - name: citezen
+    url: https://citezen.nj-vs-vh.name
 tags:
   - topic:science
   - platform:web
