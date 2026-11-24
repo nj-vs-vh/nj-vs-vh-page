@@ -1,4 +1,4 @@
-title: citezen, a custom citation formatter
+title: citezen, a (vibe-coded) custom citation formatter
 start:
   year: 2026
   month: 10
@@ -7,6 +7,8 @@ github: https://github.com/nj-vs-vh/citezen
 links:
   - name: citezen
     url: https://citezen.nj-vs-vh.name
+  - name: AI:W
+    url: https://0rwx.com/
 tags:
   - topic:science
   - platform:web

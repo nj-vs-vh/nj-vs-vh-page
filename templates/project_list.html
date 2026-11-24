@@ -11,10 +11,11 @@
   {% match tag_filter %} {% when Some with (tag_filter) %}
   <header><a href="/">home</a> / <a href="/projects">projects</a> /</header>
   <h1>{{tag_filter}}</h1>
+  <p>newest -> oldest; see <a href="/projects">all projects</a> or <a href="/tags">other tags</a></p>
   {% when None %}
   <header><a href="/">home</a> /</header>
   <h1>projects</h1>
-  <p>newest -> oldest</p>
+  <p>newest -> oldest; see also <a href="/tags">project tags</a></p>
   {% endmatch %}
   <ul>
     {% for ph in project_hyperlinks %}
